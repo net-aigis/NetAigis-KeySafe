@@ -274,3 +274,19 @@ publish callback while unauthorized. When authorization is someday granted it
 still revalidates the lease-bound revision before PUT. This is not yet a
 lossless plaintext merge writer; a validated merged ciphertext must be supplied
 separately. Automatic publication remains disabled.
+
+## Conflict-free selected model assembly (phase 3B; still no auto-publish)
+
+`KdbxConflictFreeSelectedAssembler.assemble` builds an in-memory `DatabaseKDBX`
+from a conflict-free `KdbxThreeCopyReview` by cloning groups/entries/tombstones
+from the winning side of each UUID decision. Preconditions (fail closed):
+
+- `unknownExtensionsRefused`
+- empty record and metadata conflict lists
+- no append-order preview
+- every metadata decision is `UNCHANGED`
+- merge authorization remains denied
+
+This does not serialize ciphertext, does not call `DatabaseKDBXMerger`, does not
+clear standing gate blockers, and does not publish. Metadata edits and
+attachment/custom-icon reconstruction remain later slices.
