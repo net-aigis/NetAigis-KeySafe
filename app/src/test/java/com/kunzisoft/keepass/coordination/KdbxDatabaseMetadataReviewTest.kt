@@ -226,6 +226,27 @@ class KdbxDatabaseMetadataReviewTest {
             source(report(base, local, remote), "database.publicCustomData/blob"))
     }
 
+    @Test fun `unreferenced attachment pool binaries are reviewed`() {
+        fun withOrphan(bytes: ByteArray): DatabaseKDBX = db().also { database ->
+            database.attachmentPool.put(7, object : BinaryData() {
+                override fun getInputDataStream(binaryCache: BinaryCache): InputStream =
+                    ByteArrayInputStream(bytes)
+                override fun getOutputDataStream(binaryCache: BinaryCache): OutputStream =
+                    ByteArrayOutputStream()
+                override fun compress(binaryCache: BinaryCache) {}
+                override fun decompress(binaryCache: BinaryCache) {}
+                override fun clear(binaryCache: BinaryCache) {}
+            })
+        }
+        val result = report(
+            withOrphan(byteArrayOf(1, 2, 3)),
+            withOrphan(byteArrayOf(1, 2, 4)),
+            withOrphan(byteArrayOf(1, 2, 5))
+        )
+        assertEquals(KdbxDatabaseMetadataReview.Source.CONFLICT,
+            source(result, "database.attachmentPool/7"))
+    }
+
     @Test fun `missing KDF engine fails closed`() {
         rejects { report(db(), db().apply { kdfEngine = null }, db()) }
     }

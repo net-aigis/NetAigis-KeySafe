@@ -214,7 +214,17 @@ KDF salt/seed (`S`) and optional secret-key (`K`) bytes are compared only by
 presence, type and length; raw secret material never leaves the review API.
 Unsupported VariantDictionary value types fail closed.
 
-Still **not** covered by this phase: parser-silent unknown XML elements,
-unknown inner-header field IDs, unreferenced binary-pool blobs, and
-tree-vs-index orphan consistency. Those remain mandatory blockers before any
+Still **not** covered by this phase: parser-silent unknown XML elements and
+unknown inner-header field IDs. Those remain mandatory blockers before any
 merge/write authorization. No automatic merge, save or publication is enabled.
+
+## Attachment pool and index orphan review (phase 2M; still read-only)
+
+`KdbxDatabaseMetadataReview` fingerprints every attachment-pool binary by pool
+key and decoded content, including blobs that no entry references.
+`KdbxModelSnapshotReader` fails closed when a group/entry index UUID is not
+reachable from the root tree (orphaned indexes). Empty indexes remain allowed
+for synthetic unit inventories that only build parent/child links.
+
+Parser-silent unknown XML/inner-header fields are still out of scope. No
+automatic merge, save or publication is enabled.

@@ -145,6 +145,24 @@ internal object KdbxDatabaseMetadataReview {
                 binary(iconBinary, db)
             }
         }
+
+        // Entire attachment pool, including binaries not referenced by any entry.
+        // Unreferenced blobs would otherwise be invisible and lost on rewrite.
+        val poolKeys = ArrayList<Int>()
+        db.attachmentPool.doForEachBinary { key, _ -> poolKeys.add(key) }
+        poolKeys.sort()
+        require(poolKeys.distinct().size == poolKeys.size) {
+            "Duplicate KDBX attachment pool key"
+        }
+        for (key in poolKeys) {
+            val binary = requireNotNull(db.attachmentPool[key]) {
+                "KDBX attachment pool key disappeared during review"
+            }
+            add("database.attachmentPool/$key") {
+                number(key.toLong())
+                binary(binary, db)
+            }
+        }
         return result
     }
 

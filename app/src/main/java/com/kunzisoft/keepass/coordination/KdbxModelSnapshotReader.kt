@@ -84,6 +84,24 @@ internal object KdbxModelSnapshotReader {
             }
         }
 
+        // Indexed nodes that never appear in the root traversal are orphans and
+        // must not silently disappear from a later rewrite. Synthetic tests may
+        // leave indexes empty; an empty index set is not treated as incomplete.
+        for (group in database.getGroupIndexes()) {
+            val id = group.id.toString()
+            val node = nodes[id]
+            require(node?.kind == Kind.GROUP) {
+                "KDBX group index is missing from the reachable tree: $id"
+            }
+        }
+        for (entry in database.getEntryIndexes()) {
+            val id = entry.id.toString()
+            val node = nodes[id]
+            require(node?.kind == Kind.ENTRY) {
+                "KDBX entry index is missing from the reachable tree: $id"
+            }
+        }
+
         // DeletedObjects are independent of the live tree and must not be dropped.
         // A live UUID matching a tombstone is preserved for a future conflict check;
         // the reader does not reinterpret that ambiguity or remove either record.

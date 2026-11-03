@@ -130,4 +130,16 @@ class KdbxModelSnapshotReaderTest {
         root.parent = GroupKDBX()
         rejected { KdbxModelSnapshotReader.read(db) }
     }
+
+    @Test fun `rejects indexed entry that is unreachable from the root`() {
+        val (db, _) = database()
+        db.addEntryIndex(EntryKDBX())
+        rejected { KdbxModelSnapshotReader.read(db) }
+    }
+
+    @Test fun `rejects indexed group that is unreachable from the root`() {
+        val (db, _) = database()
+        db.addGroupIndex(GroupKDBX())
+        rejected { KdbxModelSnapshotReader.read(db) }
+    }
 }
