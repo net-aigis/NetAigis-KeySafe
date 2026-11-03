@@ -233,7 +233,8 @@ merge, save or publication is enabled.
 `KdbxMergeAuthorizationGate` records standing blockers that keep automatic
 merge/publish denied even when a three-copy review looks conflict-free:
 
-- absence of a validated lossless merge writer
+- absence of a validated lossless merge writer under native Argon2 / dual-client reopen
+  (AES-KDF assemble→write→reload is unit- and live-protocol-covered)
 - incomplete KeePassXC/KeySafe dual-client crash/recovery proofs
 
 In addition, a report that does not attest

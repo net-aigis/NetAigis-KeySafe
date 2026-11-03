@@ -93,6 +93,14 @@ jobs:
           if int(suite.get('tests', '0')) < 1 or int(suite.get('skipped', '0')) != 0:
               raise SystemExit('Live integration test was not executed or was skipped')
           print('Live Kotlin/Go integration test executed without skips')
+          real_reports = list(report_dir.glob('*KdbxLiveRealCiphertextIntegrationTest.xml'))
+          if len(real_reports) != 1:
+              raise SystemExit(
+                  f'Expected one live real-ciphertext integration report, got {len(real_reports)}')
+          real_suite = ET.parse(real_reports[0]).getroot()
+          if int(real_suite.get('tests', '0')) < 1 or int(real_suite.get('skipped', '0')) != 0:
+              raise SystemExit('Live real-ciphertext integration test was not executed or was skipped')
+          print('Live Kotlin/Go real AES-KDF ciphertext test executed without skips')
           PYTEST
       - name: Preserve built APK for testing
         if: success()

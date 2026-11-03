@@ -39,7 +39,9 @@ class KdbxGatedMergePipelineTest {
     fun `pipeline outcome type keeps publish denied semantics`() {
         val outcome = KdbxGatedMergePipeline.Outcome(
             published = false,
-            blockers = listOf("no validated lossless KDBX merge writer exists"),
+            blockers = listOf(
+                "no validated lossless KDBX merge writer under native Argon2 / dual-client reopen"
+            ),
             confirmedRevision = null,
             report = null
         )

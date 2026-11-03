@@ -2,15 +2,17 @@
 
 Automatic merge/publish stays denied until these scenarios are evidenced.
 Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
-**not** dual-client proof: it uses dummy ciphertext and no KeePassXC.
+**not** dual-client proof with KeePassXC, even when real AES-KDF ciphertext is used.
 
-## Proven today (Android ↔ Go, dummy bytes only)
+## Proven today (Android ↔ Go)
 
-- Exclusive lease, read-only observer, successive writes, lock handoff
+- Exclusive lease, read-only observer, successive writes, lock handoff (dummy bytes)
 - Concurrent lease acquisition (one winner)
 - External lease revocation blocks stale overwrite
 - PUT committed but HTTP acknowledgement lost
 - PUT interrupted before the coordinator sees the body
+- Assembled AES-KDF KDBX publish + strict reload through the live Go coordinator
+  (`KdbxLiveRealCiphertextIntegrationTest`; still no KeePassXC)
 
 ## Still required before clearing the dual-client gate blocker
 
@@ -20,8 +22,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 | Android opens the same revision the XC client just published | open |
 | Second client detects an active lease held by the first | open |
 | Lease expiry / lease loss during an edit on each client | open |
-| Interrupted upload with real KDBX ciphertext on XC and Android | open |
-| Interrupted download with real KDBX ciphertext on XC and Android | open |
+| Interrupted upload with real KDBX ciphertext on XC and Android | open (Android AES-KDF happy-path publish proven; interrupt+XC still open) |
+| Interrupted download with real KDBX ciphertext on XC and Android | open (Android AES-KDF happy-path download/reload proven; interrupt+XC still open) |
 | Offline edit on Android only, then reconnect | partial (cache/recovery unit tests; not XC) |
 | Offline edit on desktop only, then reconnect | open |
 | Two independent offline edits, reconnect in either order | open |

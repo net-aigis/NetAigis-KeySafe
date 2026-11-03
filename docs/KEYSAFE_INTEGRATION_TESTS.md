@@ -16,7 +16,10 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    verifies the committed content; stale retry is rejected.
 5. Proxy blocks first PUT before contacting Go. Existing remote version remains
    unchanged; subsequent valid save succeeds.
-6. Existing Go reference tests cover concurrent same-revision writes, a
+6. Assembled AES-KDF KDBX ciphertext (not dummy bytes) publishes through the
+   live Go coordinator and reloads under strict unknown-extension refusal.
+   This is still Android↔Go only; KeePassXC dual-client proofs remain open.
+7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
    They run under Go's race detector.
 
@@ -33,8 +36,9 @@ XML report**, rejecting missing/skipped integration coverage.
 
 - Android device lifecycle, process death, filesystem durability, or recovery
   persistence under power loss.
-- Actual KDBX cryptographic parsing/encryption, large KDBX streaming, or TLS
-  certificate verification by Android (test traffic is loopback-only).
-- Real two-device/desktop interoperation, distributed deployments or server
+- Large KDBX streaming, or TLS certificate verification by Android (test
+  traffic is loopback-only). AES-KDF assemble/publish/reload is covered; native
+  Argon2 is not.
+- Real KeePassXC ↔ Android interoperation, distributed deployments or server
   restart persistence. In particular, Go lease state is process-local.
 - Universal data-loss prevention. Do not use production password databases yet.
