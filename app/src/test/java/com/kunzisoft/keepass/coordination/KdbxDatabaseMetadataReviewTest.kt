@@ -2,6 +2,8 @@
 package com.kunzisoft.keepass.coordination
 
 import com.kunzisoft.keepass.database.crypto.EncryptionAlgorithm
+import com.kunzisoft.keepass.database.crypto.kdf.AesKdf
+import com.kunzisoft.keepass.database.crypto.kdf.Argon2Kdf
 import com.kunzisoft.keepass.database.crypto.kdf.KdfFactory
 import com.kunzisoft.keepass.database.element.CustomDataItem
 import com.kunzisoft.keepass.database.element.DateInstant
@@ -152,6 +154,74 @@ class KdbxDatabaseMetadataReviewTest {
         val local = db().apply { kdfEngine = KdfFactory.argon2idKdf }
         assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL,
             source(report(db(), local, db()), "crypto.kdfUuid"))
+    }
+
+    @Test fun `KDF work-factor changes are detected`() {
+        // Use dedicated engines; KdfFactory singletons must not be mutated.
+        val base = db().apply { kdfEngine = AesKdf() }
+        val local = db().apply { kdfEngine = AesKdf().also { it.setKeyRounds(12_345L) } }
+        val remote = db().apply { kdfEngine = AesKdf() }
+        val result = report(base, local, remote)
+        assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL, source(result, "crypto.kdfRounds"))
+        assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL, source(result, "crypto.kdfParam/R"))
+    }
+
+    @Test fun `full KDF parameter map detects Argon2 version conflicts`() {
+        val base = db().apply {
+            kdfEngine = Argon2Kdf(Argon2Kdf.Type.ARGON2_ID).also {
+                it.parameters.setUInt32("V", 0x12u)
+            }
+        }
+        val local = db().apply {
+            kdfEngine = Argon2Kdf(Argon2Kdf.Type.ARGON2_ID).also {
+                it.parameters.setUInt32("V", 0x13u)
+            }
+        }
+        val remote = db().apply {
+            kdfEngine = Argon2Kdf(Argon2Kdf.Type.ARGON2_ID).also {
+                it.parameters.setUInt32("V", 0x10u)
+            }
+        }
+        assertEquals(KdbxDatabaseMetadataReview.Source.CONFLICT,
+            source(report(base, local, remote), "crypto.kdfParam/V"))
+    }
+
+    @Test fun `KDF salt length changes without exposing salt bytes`() {
+        val base = db().apply {
+            kdfEngine = AesKdf().also { it.parameters.setByteArray("S", ByteArray(16) { 7 }) }
+        }
+        val local = db().apply {
+            kdfEngine = AesKdf().also { it.parameters.setByteArray("S", ByteArray(32) { 9 }) }
+        }
+        val remote = db().apply {
+            kdfEngine = AesKdf().also { it.parameters.setByteArray("S", ByteArray(16) { 7 }) }
+        }
+        val result = report(base, local, remote)
+        assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL, source(result, "crypto.kdfParam/S"))
+        assertFalse(result.toString().contains("\u0007"))
+    }
+
+    @Test fun `publicCustomData changes are reviewed`() {
+        val local = db().apply { publicCustomData.setString("vendor", "secret-token") }
+        val result = report(db(), local, db())
+        assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL,
+            source(result, "database.publicCustomData/vendor"))
+        assertFalse(result.toString().contains("secret-token"))
+    }
+
+    @Test fun `divergent publicCustomData values conflict`() {
+        val local = db().apply { publicCustomData.setUInt32("flag", 1u) }
+        val remote = db().apply { publicCustomData.setUInt32("flag", 2u) }
+        assertEquals(KdbxDatabaseMetadataReview.Source.CONFLICT,
+            source(report(db(), local, remote), "database.publicCustomData/flag"))
+    }
+
+    @Test fun `publicCustomData byte arrays are compared by content`() {
+        val base = db().apply { publicCustomData.setByteArray("blob", byteArrayOf(1, 2, 3)) }
+        val local = db().apply { publicCustomData.setByteArray("blob", byteArrayOf(1, 2, 4)) }
+        val remote = db().apply { publicCustomData.setByteArray("blob", byteArrayOf(1, 2, 5)) }
+        assertEquals(KdbxDatabaseMetadataReview.Source.CONFLICT,
+            source(report(base, local, remote), "database.publicCustomData/blob"))
     }
 
     @Test fun `missing KDF engine fails closed`() {

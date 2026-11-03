@@ -200,3 +200,21 @@ decisions, never reindexes a selected topology, and never authorizes merge,
 save or upload. Title, notes or flag edits on a parent suppress the preview.
 Entry/tombstone conflicts also suppress it. See
 `docs/KEYSAFE_CONCURRENT_APPEND_ORDER_REVIEW.md`.
+
+## Public custom data and full KDF parameter review (phase 2L; still read-only)
+
+`KdbxDatabaseMetadataReview` now classifies:
+
+- every `publicCustomData` VariantDictionary entry (typed values, including
+  byte arrays by content)
+- every KDF VariantDictionary entry under `crypto.kdfParam/*`, in addition to
+  the existing cipher UUID and work-factor getters
+
+KDF salt/seed (`S`) and optional secret-key (`K`) bytes are compared only by
+presence, type and length; raw secret material never leaves the review API.
+Unsupported VariantDictionary value types fail closed.
+
+Still **not** covered by this phase: parser-silent unknown XML elements,
+unknown inner-header field IDs, unreferenced binary-pool blobs, and
+tree-vs-index orphan consistency. Those remain mandatory blockers before any
+merge/write authorization. No automatic merge, save or publication is enabled.

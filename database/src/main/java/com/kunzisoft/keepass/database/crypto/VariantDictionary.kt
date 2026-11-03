@@ -118,6 +118,19 @@ open class VariantDictionary : Serializable {
         return dict.size
     }
 
+    /**
+     * Read-only, ordered snapshot of dictionary entries for comparison tooling.
+     * Callers must not mutate returned [ByteArray] values or treat this as a
+     * serialization/merge authorization surface.
+     */
+    fun snapshotEntries(): List<SnapshotEntry> {
+        return dict.entries
+            .map { (name, typed) -> SnapshotEntry(name, typed.type, typed.value) }
+            .sortedBy { it.name }
+    }
+
+    data class SnapshotEntry(val name: String, val type: Byte, val value: Any)
+
     companion object {
         private const val VdVersion = 0x0100
         private const val VdmCritical = 0xFF00

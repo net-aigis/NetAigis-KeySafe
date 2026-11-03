@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.kunzisoft.keepass.coordination
 
+import com.kunzisoft.keepass.database.crypto.VariantDictionary
 import com.kunzisoft.keepass.database.element.DateInstant
 import com.kunzisoft.keepass.database.element.binary.BinaryData
 import com.kunzisoft.keepass.database.element.database.DatabaseKDBX
@@ -13,11 +14,14 @@ import javax.crypto.spec.SecretKeySpec
  * No metadata values, MACs, decrypted fields or binary contents leave this API.
  *
  * NOT a complete serialization inventory and NOT merge/write authorization:
- * complete KDF parameters/salts, public header variants, credential material, raw
- * binary-pool reconstruction and unknown KDBX extensions still need review.
+ * raw binary-pool reconstruction, credential material, and parser-silent
+ * unknown XML/inner-header extensions still need separate review.
  */
 internal object KdbxDatabaseMetadataReview {
     private const val MAX_UNPACKED_ICON_BYTES = 64L * 1024L * 1024L
+    // AES seed ("S"), Argon2 salt ("S") and optional Argon2 secret key ("K").
+    // Presence and length are compared; raw secret bytes never leave this class.
+    private val KDF_SECRET_BYTE_KEYS = setOf("S", "K")
 
     enum class Source { UNCHANGED, LOCAL, REMOTE, IDENTICAL, CONFLICT }
     data class Decision(val key: String, val source: Source)
@@ -83,9 +87,9 @@ internal object KdbxDatabaseMetadataReview {
         add("database.lastTopVisibleGroupUUID") { text(db.lastTopVisibleGroupUUID.toString()) }
         add("database.compressionAlgorithm") { text(db.compressionAlgorithm.name) }
 
-        // Compare effective cryptographic choices, never the secret credential
-        // or randomized per-file KDF salt. Unknown KDF extensions remain a
-        // separate mandatory blocker before any merge/write authorization.
+        // Compare effective cryptographic choices. Work-factor getters remain
+        // for compatibility; the full KDF VariantDictionary is also reviewed.
+        // Secret salt/seed bytes are never returned—only type and length.
         val kdf = requireNotNull(db.kdfEngine) { "KDBX has no KDF engine" }
         val kdfUuid = requireNotNull(kdf.uuid) { "KDBX KDF algorithm UUID is missing" }
         add("crypto.cipherUuid") { text(db.encryptionAlgorithm.uuid.toString()) }
@@ -93,6 +97,20 @@ internal object KdbxDatabaseMetadataReview {
         add("crypto.kdfRounds") { text(kdf.getKeyRounds().toString()) }
         add("crypto.kdfMemory") { text(kdf.getMemoryUsage().toString()) }
         add("crypto.kdfParallelism") { number(kdf.getParallelism()) }
+        addVariantDictionary("crypto.kdfParam", kdf.parameters) { name, type, value ->
+            add("crypto.kdfParam/$name") {
+                text(name)
+                number(type.toLong())
+                variantValue(name, type, value, redactSecretBytes = true)
+            }
+        }
+        addVariantDictionary("database.publicCustomData", db.publicCustomData) { name, type, value ->
+            add("database.publicCustomData/$name") {
+                text(name)
+                number(type.toLong())
+                variantValue(name, type, value, redactSecretBytes = false)
+            }
+        }
 
         val protection = db.memoryProtection
         add("memory.protectTitle") { bool(protection.protectTitle) }
@@ -130,6 +148,58 @@ internal object KdbxDatabaseMetadataReview {
         return result
     }
 
+    private fun addVariantDictionary(
+        label: String,
+        dictionary: VariantDictionary,
+        addEntry: (name: String, type: Byte, value: Any) -> Unit
+    ) {
+        val entries = dictionary.snapshotEntries()
+        require(entries.map { it.name }.distinct().size == entries.size) {
+            "Duplicate $label key"
+        }
+        for (entry in entries) {
+            require(entry.name.isNotEmpty()) { "Empty $label key" }
+            addEntry(entry.name, entry.type, entry.value)
+        }
+    }
+
+    private fun Writer.variantValue(
+        name: String,
+        type: Byte,
+        value: Any,
+        redactSecretBytes: Boolean
+    ) {
+        when (type) {
+            VariantDictionary.VdType.UInt32, VariantDictionary.VdType.Int32 -> {
+                require(value is Int) { "Malformed VariantDictionary Int for $name" }
+                number(value.toLong())
+            }
+            VariantDictionary.VdType.UInt64, VariantDictionary.VdType.Int64 -> {
+                require(value is Long) { "Malformed VariantDictionary Long for $name" }
+                number(value)
+            }
+            VariantDictionary.VdType.Bool -> {
+                require(value is Boolean) { "Malformed VariantDictionary Bool for $name" }
+                bool(value)
+            }
+            VariantDictionary.VdType.String -> {
+                require(value is String) { "Malformed VariantDictionary String for $name" }
+                text(value)
+            }
+            VariantDictionary.VdType.ByteArray -> {
+                require(value is ByteArray) { "Malformed VariantDictionary ByteArray for $name" }
+                if (redactSecretBytes && name in KDF_SECRET_BYTE_KEYS) {
+                    // Compare presence and length only; never MAC the secret bytes.
+                    text("secret-length")
+                    number(value.size.toLong())
+                } else {
+                    bytes(value)
+                }
+            }
+            else -> throw IllegalArgumentException("Unsupported VariantDictionary type for $name")
+        }
+    }
+
     private class Writer(key: ByteArray, name: String) {
         private val mac: Mac = Mac.getInstance("HmacSHA256").apply {
             init(SecretKeySpec(key, "HmacSHA256"))
@@ -157,6 +227,10 @@ internal object KdbxDatabaseMetadataReview {
                 number(value.instant.millis)
                 text(value.type.name)
             }
+        }
+        fun bytes(value: ByteArray) {
+            length(value.size.toLong())
+            mac.update(value)
         }
         fun binary(value: BinaryData, db: DatabaseKDBX) {
             require(!value.isCorrupted) { "Corrupted KDBX custom icon" }
