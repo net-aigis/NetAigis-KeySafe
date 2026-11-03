@@ -32,6 +32,20 @@ runs the Gradle test task without installing the coordinator on user machines.
 checks without a coordinator. The CI step sets the URL **and checks its JUnit
 XML report**, rejecting missing/skipped integration coverage.
 
+Native Argon2id assemble→write→reload (DX only):
+
+```bash
+./gradlew :app:connectedLibreDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=\
+com.kunzisoft.keepass.coordination.KdbxAssembledCiphertextArgon2InstrumentedTest
+```
+
+CI compiles the instrumented sources (`:app:compileLibreDebugAndroidTestKotlin`)
+without running them on an emulator.
+
+Requires a device/emulator with `libaes`/`libargon2`. This is separate from
+KeePassXC dual-client proofs and is not part of the default CI unit job.
+
 ## Not proved by these tests
 
 - Android device lifecycle, process death, filesystem durability, or recovery

@@ -301,10 +301,11 @@ originals, run `KdbxGatedMergePublisher` (which remains unauthorized), and
 complete dual-client proofs before any automatic publication.
 
 AES-KDF assemble→write→strict-reload is covered by JVM unit tests after
-`AESTransformer` falls back when `libaes` is absent. Argon2 (and forced-native
-AES) round-trips still need an instrumented or dual-client environment
-(phase 4). The standing gate blocker for a validated lossless merge writer
-remains until that evidence exists; auto-publish stays off.
+`AESTransformer` falls back when `libaes` is absent. Native Argon2id assemble→
+write→reload has an instrumented DX harness
+(`KdbxAssembledCiphertextArgon2InstrumentedTest`); the default CI unit job does
+not run connected tests, so that evidence stays open until a device/emulator
+run is recorded. The standing gate blocker remains; auto-publish stays off.
 
 ## Gated merge pipeline (phase 3D; auto-publish off)
 

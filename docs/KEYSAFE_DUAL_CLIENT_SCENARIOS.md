@@ -31,7 +31,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 | Crash during save + recovery reopen on the same client | partial (Android recovery unit tests) |
 | Re-open every produced KDBX in **both** KeePassXC and KeySafe | open |
 | Assembled ciphertext round-trip under AES-KDF (JVM) | proven (`KdbxAssembledCiphertextWriterTest`; does not authorize publish) |
-| Assembled ciphertext round-trip under native Argon2 / forced-native AES | open (needs instrumented or dual-client environment) |
+| Assembled ciphertext round-trip under native Argon2 / forced-native AES | open (DX harness: `KdbxAssembledCiphertextArgon2InstrumentedTest`; not in default CI unit job; needs device/emulator) |
 
 ## XC checkout for interop
 

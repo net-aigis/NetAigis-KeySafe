@@ -73,7 +73,8 @@ jobs:
             exit 1
           fi
           ./gradlew --no-daemon --stacktrace \
-            :database:testDebugUnitTest :app:testLibreDebugUnitTest :app:assembleLibreDebug
+            :database:testDebugUnitTest :app:testLibreDebugUnitTest \
+            :app:compileLibreDebugAndroidTestKotlin :app:assembleLibreDebug
           # Do not allow integration tests to be silently skipped by a misconfigured job.
           python3 - <<'PYTEST'
           from pathlib import Path
