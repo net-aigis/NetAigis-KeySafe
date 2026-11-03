@@ -33,5 +33,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 ## XC checkout for interop
 
 Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
-feature tip. Unbounded `reply->readAll()` remains a phase-5 hardening item and
-must not be treated as dual-client proof.
+feature tip. Phase-5 HTTP body bounds for `KdbxCoordinatorClient` live on
+`security/kdbx-bound-http-bodies-4b2a3ce6` (64 MiB KDBX / 16 KiB control,
+aligned with KeySafe). That change is not dual-client proof and is not yet
+fast-forwarded onto `feature/coordinated-kdbx-20261014` until XC CI confirms it.
