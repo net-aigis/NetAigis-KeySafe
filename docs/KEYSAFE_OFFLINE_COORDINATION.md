@@ -327,5 +327,6 @@ protocol tests; `network_security_config` mirrors that. Access tokens stay in
 AndroidKeyStore-wrapped SharedPreferences (`coordinated_kdbx`), excluded from
 backup/restore. KeePassXC enforces HTTPS (loopback HTTP exception), TLS 1.2+,
 peer verification without ignoring SSL errors, and keeps the bearer in encrypted
-KDBX custom data. Body size caps remain 64 MiB KDBX / 16 KiB control. None of
+KDBX custom data. Body size caps remain 64 MiB KDBX / 16 KiB control on clients;
+the Go loopback fixture rejects PUTs above the same 64 MiB ceiling. None of
 this clears standing merge-authorization blockers or enables auto-publish.

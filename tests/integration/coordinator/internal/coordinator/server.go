@@ -19,7 +19,8 @@ import (
 	"time"
 )
 
-const maxBody = int64(2 << 30) // 2 GiB: configurable later, not entire-memory buffering
+// Aligned with KeySafe/XC CoordinatorByteLimits (64 MiB KDBX). Overridable in tests only.
+var maxBody = int64(64 << 20)
 const leaseDuration = 90 * time.Second
 
 type lease struct {

@@ -3,6 +3,8 @@ package coordinator
 import (
 	"bytes"
 	"encoding/json"
+	"io"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
@@ -184,5 +186,44 @@ func TestRenewLease(t *testing.T) {
 	now = now.Add(60 * time.Second)
 	if got := request(t, s, "PUT", "/v1/databases/shared/file", l.Token, "0", []byte("after renewal")).Code; got != 200 {
 		t.Fatalf("renewed lease not valid: %d", got)
+	}
+}
+
+type zeroReader struct{ left int64 }
+
+func (z *zeroReader) Read(p []byte) (int, error) {
+	if z.left <= 0 {
+		return 0, io.EOF
+	}
+	n := len(p)
+	if int64(n) > z.left {
+		n = int(z.left)
+	}
+	clear(p[:n])
+	z.left -= int64(n)
+	return n, nil
+}
+
+func TestRejectOversizedUpload(t *testing.T) {
+	previous := maxBody
+	maxBody = 1024
+	t.Cleanup(func() { maxBody = previous })
+
+	s, err := New(t.TempDir(), key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	l := lock(t, s)
+	req := httptest.NewRequest(http.MethodPut, "/v1/databases/shared/file", &zeroReader{left: maxBody + 1})
+	req.Header.Set("Authorization", "Bearer "+key)
+	req.Header.Set("X-KDBX-Lease", l.Token)
+	req.Header.Set("If-Match", `"`+l.Revision+`"`)
+	w := httptest.NewRecorder()
+	s.ServeHTTP(w, req)
+	if w.Code != 400 {
+		t.Fatalf("oversized upload accepted: %d %s", w.Code, w.Body.String())
+	}
+	if got := request(t, s, "GET", "/v1/databases/shared/file", "", "", nil).Code; got != 404 {
+		t.Fatalf("oversized body must not commit: %d", got)
 	}
 }
