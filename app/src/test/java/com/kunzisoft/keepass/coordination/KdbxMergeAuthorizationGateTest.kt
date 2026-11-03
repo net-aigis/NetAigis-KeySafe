@@ -56,6 +56,7 @@ class KdbxMergeAuthorizationGateTest {
         assertFalse(report.mergeAuthorization.blockers.any { it.contains("refuseUnknownExtensions") })
         assertTrue(report.mergeAuthorization.blockers.any { it.contains("merge writer") })
         assertTrue(report.mergeAuthorization.blockers.any { it.contains("dual-client") })
+        assertTrue(KdbxDualClientProofStatus.incompleteProofs.isNotEmpty())
     }
 
     @Test fun `append-order preview does not clear the authorization gate`() {

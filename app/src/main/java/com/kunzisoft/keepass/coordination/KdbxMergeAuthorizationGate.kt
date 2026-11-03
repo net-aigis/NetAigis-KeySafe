@@ -26,7 +26,7 @@ internal object KdbxMergeAuthorizationGate {
     /** Remaining integrity and safety blockers known at this KeySafe revision. */
     val standingBlockers: List<String> = listOf(
         "no validated lossless KDBX merge writer exists",
-        "KeePassXC and KeySafe dual-client crash/recovery proofs are incomplete"
+        KdbxDualClientProofStatus.gateBlocker
     )
 
     /**

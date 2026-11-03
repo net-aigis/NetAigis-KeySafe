@@ -303,3 +303,11 @@ JVM unit tests cannot load `libaes`/`libargon2`, so ciphertext round-trip
 proofs belong in an instrumented or dual-client environment (phase 4). The
 standing gate blocker for a validated lossless merge writer remains until that
 evidence exists; auto-publish stays off.
+
+## Dual-client interoperability checklist (phase 4; auto-publish off)
+
+`KdbxDualClientProofStatus` lists the KeePassXC ↔ KeySafe ↔ coordinator
+scenarios that still deny merge authorization. Android↔Go loopback tests with
+dummy ciphertext (`KEYSAFE_INTEGRATION_TESTS.md`) do not clear that list.
+Track open items in `docs/KEYSAFE_DUAL_CLIENT_SCENARIOS.md`. No automatic
+merge, save or publication is enabled.
