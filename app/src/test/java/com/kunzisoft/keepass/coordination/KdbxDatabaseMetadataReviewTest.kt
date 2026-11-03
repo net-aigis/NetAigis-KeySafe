@@ -159,7 +159,7 @@ class KdbxDatabaseMetadataReviewTest {
     @Test fun `KDF work-factor changes are detected`() {
         // Use dedicated engines; KdfFactory singletons must not be mutated.
         val base = db().apply { kdfEngine = AesKdf() }
-        val local = db().apply { kdfEngine = AesKdf().also { it.setKeyRounds(12_345L) } }
+        val local = db().apply { kdfEngine = AesKdf().also { it.setKeyRounds(12_345uL) } }
         val remote = db().apply { kdfEngine = AesKdf() }
         val result = report(base, local, remote)
         assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL, source(result, "crypto.kdfRounds"))
