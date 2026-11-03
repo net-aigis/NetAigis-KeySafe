@@ -234,7 +234,6 @@ merge, save or publication is enabled.
 merge/publish denied even when a three-copy review looks conflict-free:
 
 - absence of a validated lossless merge writer
-- absence of exclusive-lease revalidation for a merged upload
 - incomplete KeePassXC/KeySafe dual-client crash/recovery proofs
 
 In addition, a report that does not attest
@@ -242,6 +241,10 @@ In addition, a report that does not attest
 `KdbxThreeCopyReview.Report.mergeAuthorization` is always unauthorized while
 those conditions hold. Append-order previews and empty conflict lists never
 clear the gate. No automatic merge, save or publication is enabled.
+
+Exclusive-lease revalidation of the merge target is wired into
+`KdbxGatedMergePublisher` (phase 3) and runs only on an authorized path; it
+does not by itself authorize publication.
 
 ## Opt-in refuse of unknown KDBX extensions (phase 2O; still no auto-publish)
 
@@ -256,5 +259,18 @@ clear the gate. No automatic merge, save or publication is enabled.
 must load with `KdbxCoordinationLoadPolicy.REFUSE_UNKNOWN_EXTENSIONS` and pass
 `unknownExtensionsRefused=true` into `KdbxThreeCopyReview.read`. Without that
 attestation the authorization gate still denies. No automatic merge, save or
-publication is enabled; writer, lease revalidation and dual-client proofs
-remain standing blockers.
+publication is enabled; lossless writer and dual-client proofs remain standing
+blockers.
+
+## Gated merge publisher with lease revalidation (phase 3; auto-publish off)
+
+`KdbxMergeLeaseRevalidator` re-downloads the coordinator file under a live
+exclusive lease and requires the content SHA-256 to still equal the expected
+base revision (or both sides empty for revision `0`).
+
+`KdbxGatedMergePublisher.attempt` retains the caller-supplied base/local/remote
+ciphertexts, evaluates `KdbxMergeAuthorizationGate`, and **never** invokes the
+publish callback while unauthorized. When authorization is someday granted it
+still revalidates the lease-bound revision before PUT. This is not yet a
+lossless plaintext merge writer; a validated merged ciphertext must be supplied
+separately. Automatic publication remains disabled.
