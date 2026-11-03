@@ -156,45 +156,47 @@ class KdbxDatabaseMetadataReviewTest {
             source(report(db(), local, db()), "crypto.kdfUuid"))
     }
 
+    /** Fresh engine + fresh parameter map; setter would otherwise reuse prior params. */
+    private fun DatabaseKDBX.withAesKdf(): AesKdf {
+        val engine = AesKdf()
+        kdfEngine = engine
+        engine.parameters = engine.defaultParameters
+        return engine
+    }
+
+    private fun DatabaseKDBX.withArgon2idKdf(): Argon2Kdf {
+        val engine = Argon2Kdf(Argon2Kdf.Type.ARGON2_ID)
+        kdfEngine = engine
+        engine.parameters = engine.defaultParameters
+        return engine
+    }
+
     @Test fun `KDF work-factor changes are detected`() {
-        // Use dedicated engines; KdfFactory singletons must not be mutated.
-        val base = db().apply { kdfEngine = AesKdf() }
-        val local = db().apply { kdfEngine = AesKdf().also { it.setKeyRounds(12_345uL) } }
-        val remote = db().apply { kdfEngine = AesKdf() }
+        val base = db().also { it.withAesKdf() }
+        val local = db().also { it.withAesKdf().setKeyRounds(12_345uL) }
+        val remote = db().also { it.withAesKdf() }
         val result = report(base, local, remote)
         assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL, source(result, "crypto.kdfRounds"))
         assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL, source(result, "crypto.kdfParam/R"))
     }
 
     @Test fun `full KDF parameter map detects Argon2 version conflicts`() {
-        val base = db().apply {
-            kdfEngine = Argon2Kdf(Argon2Kdf.Type.ARGON2_ID).also {
-                it.parameters.setUInt32("V", 0x12u)
-            }
-        }
-        val local = db().apply {
-            kdfEngine = Argon2Kdf(Argon2Kdf.Type.ARGON2_ID).also {
-                it.parameters.setUInt32("V", 0x13u)
-            }
-        }
-        val remote = db().apply {
-            kdfEngine = Argon2Kdf(Argon2Kdf.Type.ARGON2_ID).also {
-                it.parameters.setUInt32("V", 0x10u)
-            }
-        }
+        val base = db().also { it.withArgon2idKdf().parameters.setUInt32("V", 0x12u) }
+        val local = db().also { it.withArgon2idKdf().parameters.setUInt32("V", 0x13u) }
+        val remote = db().also { it.withArgon2idKdf().parameters.setUInt32("V", 0x10u) }
         assertEquals(KdbxDatabaseMetadataReview.Source.CONFLICT,
             source(report(base, local, remote), "crypto.kdfParam/V"))
     }
 
     @Test fun `KDF salt length changes without exposing salt bytes`() {
-        val base = db().apply {
-            kdfEngine = AesKdf().also { it.parameters.setByteArray("S", ByteArray(16) { 7 }) }
+        val base = db().also {
+            it.withAesKdf().parameters.setByteArray("S", ByteArray(16) { 7 })
         }
-        val local = db().apply {
-            kdfEngine = AesKdf().also { it.parameters.setByteArray("S", ByteArray(32) { 9 }) }
+        val local = db().also {
+            it.withAesKdf().parameters.setByteArray("S", ByteArray(32) { 9 })
         }
-        val remote = db().apply {
-            kdfEngine = AesKdf().also { it.parameters.setByteArray("S", ByteArray(16) { 7 }) }
+        val remote = db().also {
+            it.withAesKdf().parameters.setByteArray("S", ByteArray(16) { 7 })
         }
         val result = report(base, local, remote)
         assertEquals(KdbxDatabaseMetadataReview.Source.LOCAL, source(result, "crypto.kdfParam/S"))
