@@ -44,8 +44,6 @@ class KdbxAssembledCiphertextWriterTest {
         db.keyLastChanged = fixedTime()
         db.recycleBinChanged = fixedTime()
         db.entryTemplatesGroupChanged = fixedTime()
-        // Keep unit-test KDF cheap; AES-KDF is the DatabaseKDBX default.
-        db.kdfEngine?.setKeyRounds(10uL)
         val root = GroupKDBX().also { it.nodeId = NodeIdUUID(rootId); fixNodeTimes(it) }
         db.rootGroup = root
         val entry = EntryKDBX().also {
