@@ -256,11 +256,11 @@ does not by itself authorize publication.
 
 `Database.loadData` / `reloadData` expose `refuseUnknownExtensions` (default
 `false`) so everyday UI opens stay permissive. Coordination merge candidates
-must load with `KdbxCoordinationLoadPolicy.REFUSE_UNKNOWN_EXTENSIONS` and pass
-`unknownExtensionsRefused=true` into `KdbxThreeCopyReview.read`. Without that
-attestation the authorization gate still denies. No automatic merge, save or
-publication is enabled; lossless writer and dual-client proofs remain standing
-blockers.
+must use `KdbxCoordinationStrictLoad.openEncrypted` (always
+`REFUSE_UNKNOWN_EXTENSIONS`) and pass `unknownExtensionsRefused=true` into
+`KdbxThreeCopyReview.read`. Without that attestation the authorization gate
+still denies. No automatic merge, save or publication is enabled; lossless
+writer and dual-client proofs remain standing blockers.
 
 ## Gated merge publisher with lease revalidation (phase 3; auto-publish off)
 
