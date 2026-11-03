@@ -121,4 +121,64 @@ class KdbxThreeCopyReviewTest {
         assertEquals(KdbxThreeCopyReview.Source.IDENTICAL,
             record(KdbxThreeCopyReview.read(copy(), copy(null), copy(null))))
     }
+
+    private fun entryNamed(id: UUID, parent: GroupKDBX, title: String): EntryKDBX =
+        EntryKDBX().also {
+            it.nodeId = NodeIdUUID(id)
+            fixNodeTimes(it)
+            it.parent = parent
+            it.title = title
+            parent.addChildEntry(it)
+        }
+
+    @Test fun `concurrent appends keep group conflict but attach order preview`() {
+        val localEntry = UUID.randomUUID()
+        val remoteEntry = UUID.randomUUID()
+        // Lexicographically smaller remote UUID first when original indices collide.
+        val base = copy()
+        val local = copy().also { entryNamed(localEntry, it.rootGroup!!, "local-new") }
+        val remote = copy().also { entryNamed(remoteEntry, it.rootGroup!!, "remote-new") }
+        val result = KdbxThreeCopyReview.read(base, local, remote)
+        assertEquals(KdbxThreeCopyReview.Source.CONFLICT,
+            result.decisions.single { it.id == rootId.toString() }.source)
+        assertEquals(KdbxThreeCopyReview.Source.LOCAL,
+            result.decisions.single { it.id == localEntry.toString() }.source)
+        assertEquals(KdbxThreeCopyReview.Source.REMOTE,
+            result.decisions.single { it.id == remoteEntry.toString() }.source)
+        val order = requireNotNull(result.appendOrder)
+        assertEquals(listOf(rootId.toString()), order.simultaneousGroupIds)
+        assertEquals(
+            listOf(localEntry.toString(), remoteEntry.toString()).sorted(),
+            order.groups.single().appended.map { it.entryId }.sorted()
+        )
+        assertEquals(2, order.groups.single().appended.size)
+        // Conflicts stay conflicts: preview must not rewrite classifications.
+        assertTrue(result.conflictIds.contains(rootId.toString()))
+    }
+
+    @Test fun `group title edit with appends does not claim append-only preview`() {
+        val localEntry = UUID.randomUUID()
+        val remoteEntry = UUID.randomUUID()
+        val base = copy()
+        val local = copy().also {
+            it.rootGroup!!.title = "renamed"
+            entryNamed(localEntry, it.rootGroup!!, "local-new")
+        }
+        val remote = copy().also { entryNamed(remoteEntry, it.rootGroup!!, "remote-new") }
+        val result = KdbxThreeCopyReview.read(base, local, remote)
+        assertEquals(KdbxThreeCopyReview.Source.CONFLICT,
+            result.decisions.single { it.id == rootId.toString() }.source)
+        assertEquals(null, result.appendOrder)
+    }
+
+    @Test fun `entry content conflict suppresses append-order preview`() {
+        val localEntry = UUID.randomUUID()
+        val remoteEntry = UUID.randomUUID()
+        val base = copy()
+        val local = copy("local-password").also { entryNamed(localEntry, it.rootGroup!!, "local-new") }
+        val remote = copy("remote-password").also { entryNamed(remoteEntry, it.rootGroup!!, "remote-new") }
+        val result = KdbxThreeCopyReview.read(base, local, remote)
+        assertTrue(result.conflictIds.contains(entryId.toString()))
+        assertEquals(null, result.appendOrder)
+    }
 }

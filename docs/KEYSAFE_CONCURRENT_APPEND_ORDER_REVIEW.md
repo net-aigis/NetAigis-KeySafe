@@ -2,10 +2,11 @@
 
 `KdbxConcurrentAppendOrderReview.review(base, local, remote)` compares three
 **already decrypted, stable** `KdbxModelSnapshotReader.Inventory` instances.
-It is intentionally separate from the conflict-reporting
-`KdbxThreeCopyReview`: the latter still conservatively marks edited group
-content as conflicted, because a group fingerprint contains child membership
-and order as well as other sensitive group metadata.
+`KdbxThreeCopyReview` may attach this preview when group conflicts are
+membership-only (unchanged group shell HMACs) and the append-only contract
+holds. Group UUIDs stay classified as conflicted, because a full group
+fingerprint still contains child membership and order as well as other
+sensitive group metadata. Attachment is an analysis aid only.
 
 This new helper is an **ordering-only preview**, not a merge algorithm. Its
 narrow input contract is append-only entry additions below existing groups:

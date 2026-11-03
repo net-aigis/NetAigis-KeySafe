@@ -183,3 +183,20 @@ lists or approve any write. Group-content fingerprints still include
 child membership and ordering and may conservatively report conflicts
 for otherwise independent additions. All such cases require a separate
 reviewed merge strategy. No automatic merge, save or publication is enabled.
+
+## Three-copy append-order preview attachment (phase 2K; still read-only)
+
+When `KdbxThreeCopyReview` finds conflicts, it may attach
+`KdbxConcurrentAppendOrderReview` output under strict conditions:
+
+- every conflicted UUID is a group
+- that group's shell HMAC (metadata without child membership/order) matches
+  the base copy on both local and remote sides
+- the structural append-only contract succeeds
+- the conflicted group set equals exactly the parents that received appends
+
+Parent groups remain classified as `CONFLICT`. The preview never rewrites
+decisions, never reindexes a selected topology, and never authorizes merge,
+save or upload. Title, notes or flag edits on a parent suppress the preview.
+Entry/tombstone conflicts also suppress it. See
+`docs/KEYSAFE_CONCURRENT_APPEND_ORDER_REVIEW.md`.

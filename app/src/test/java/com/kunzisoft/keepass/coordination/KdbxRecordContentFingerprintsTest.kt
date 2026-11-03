@@ -193,6 +193,21 @@ class KdbxRecordContentFingerprintsTest {
         assertNotEquals(old, KdbxRecordContentFingerprints.read(db, key).nodeHmacSha256.getValue(root.id.toString()))
     }
 
+    @Test fun `group shell ignores child membership while full HMAC does not`() {
+        val (db, root, _) = sample()
+        val before = KdbxRecordContentFingerprints.read(db, key)
+        val shell = before.groupShellHmacSha256.getValue(root.id.toString())
+        val full = before.nodeHmacSha256.getValue(root.id.toString())
+        val extra = EntryKDBX().also {
+            it.parent = root
+            it.title = "extra"
+        }
+        root.addChildEntry(extra)
+        val after = KdbxRecordContentFingerprints.read(db, key)
+        assertEquals(shell, after.groupShellHmacSha256.getValue(root.id.toString()))
+        assertNotEquals(full, after.nodeHmacSha256.getValue(root.id.toString()))
+    }
+
     @Test fun `deletion timestamps remain distinct and fingerprinted`() {
         val (db, _, _) = sample()
         val deleted = DeletedObject(UUID.randomUUID())

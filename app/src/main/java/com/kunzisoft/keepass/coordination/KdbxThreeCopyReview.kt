@@ -13,6 +13,10 @@ import java.security.SecureRandom
  * but cannot decide unknown KDBX extensions, binary-pool reconstruction,
  * credential handling or revision/lease safety. Those remain
  * mandatory before any later implementation may write or upload a merged KDBX.
+ *
+ * When independent offline appends collide only on sibling membership/order,
+ * [Report.appendOrder] may carry a deterministic ordering preview. That preview
+ * never clears conflict classifications and never authorizes save or publish.
  */
 internal object KdbxThreeCopyReview {
     enum class Source { UNCHANGED, LOCAL, REMOTE, IDENTICAL, CONFLICT }
@@ -20,7 +24,13 @@ internal object KdbxThreeCopyReview {
     data class Decision(val id: String, val source: Source)
     data class Report(
         val decisions: List<Decision>,
-        val metadata: KdbxDatabaseMetadataReview.Report
+        val metadata: KdbxDatabaseMetadataReview.Report,
+        /**
+         * Present only when every record conflict is a parent-group membership
+         * change explained by append-only additions with unchanged group shells.
+         * Still not merge/write permission.
+         */
+        val appendOrder: KdbxConcurrentAppendOrderReview.Report? = null
     ) {
         val conflictIds: List<String> get() = decisions.filter { it.source == Source.CONFLICT }.map { it.id }
     }
@@ -64,6 +74,10 @@ internal object KdbxThreeCopyReview {
                 tombstones.keys == inventory.tombstoneHmacSha256.keys) {
                 "Incomplete KDBX three-copy inventory"
             }
+            val groupIds = nodes.filterValues { it.kind == KdbxModelSnapshotReader.Kind.GROUP }.keys
+            require(inventory.groupShellHmacSha256.keys == groupIds) {
+                "Incomplete KDBX group shell inventory"
+            }
             require(nodes[root]?.kind == KdbxModelSnapshotReader.Kind.GROUP &&
                 nodes[root]?.parentGroupId == null && root !in tombstones) {
                 "KDBX root is missing, modified in type or marked deleted"
@@ -72,6 +86,7 @@ internal object KdbxThreeCopyReview {
                 "KDBX UUID occurs as both live node and DeletedObject"
             }
             require(inventory.nodeHmacSha256.values.all(macPattern::matches) &&
+                inventory.groupShellHmacSha256.values.all(macPattern::matches) &&
                 inventory.tombstoneHmacSha256.values.all(macPattern::matches)) {
                 "Malformed KDBX record fingerprint"
             }
@@ -120,7 +135,46 @@ internal object KdbxThreeCopyReview {
         if (!hasConflict) {
             KdbxSelectedTopologyPreflight.validate(root, selectedNodes)
         }
-        return Report(decisions, metadata)
+        val appendOrder = if (!hasConflict) null else appendOrderPreview(base, local, remote, decisions)
+        return Report(decisions, metadata, appendOrder)
+    }
+
+    /**
+     * Attach an ordering preview only when every CONFLICT is a parent group
+     * whose shell metadata matches base on both sides and whose membership
+     * change is explained by append-only new entries. Never mutates decisions.
+     */
+    private fun appendOrderPreview(
+        base: KdbxRecordContentFingerprints.Inventory,
+        local: KdbxRecordContentFingerprints.Inventory,
+        remote: KdbxRecordContentFingerprints.Inventory,
+        decisions: List<Decision>
+    ): KdbxConcurrentAppendOrderReview.Report? {
+        val conflicts = decisions.filter { it.source == Source.CONFLICT }
+        if (conflicts.isEmpty()) return null
+        for (decision in conflicts) {
+            val kind = base.model.nodes[decision.id]?.kind
+                ?: local.model.nodes[decision.id]?.kind
+                ?: remote.model.nodes[decision.id]?.kind
+            if (kind != KdbxModelSnapshotReader.Kind.GROUP) return null
+            val shellBase = base.groupShellHmacSha256[decision.id] ?: return null
+            val shellLocal = local.groupShellHmacSha256[decision.id] ?: return null
+            val shellRemote = remote.groupShellHmacSha256[decision.id] ?: return null
+            // Title/notes/flag edits must not be mistaken for append-only membership.
+            if (shellLocal != shellBase || shellRemote != shellBase) return null
+        }
+        val preview = try {
+            KdbxConcurrentAppendOrderReview.review(base.model, local.model, remote.model)
+        } catch (_: IllegalArgumentException) {
+            return null
+        }
+        val explained = preview.groups
+            .filter { it.appended.isNotEmpty() }
+            .map { it.groupId }
+            .toSet()
+        if (explained.isEmpty()) return null
+        if (conflicts.map { it.id }.toSet() != explained) return null
+        return preview
     }
 
     private sealed interface State {

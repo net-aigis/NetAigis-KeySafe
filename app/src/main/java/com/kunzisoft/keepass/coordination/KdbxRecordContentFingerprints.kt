@@ -32,6 +32,12 @@ internal object KdbxRecordContentFingerprints {
     data class Inventory(
         val model: KdbxModelSnapshotReader.Inventory,
         val nodeHmacSha256: Map<String, String>,
+        /**
+         * Group metadata without child membership/order. Used only to tell
+         * append-driven group HMAC conflicts apart from title/notes/flag edits.
+         * Never a write authorization signal.
+         */
+        val groupShellHmacSha256: Map<String, String>,
         val tombstoneHmacSha256: Map<String, String>
     )
 
@@ -42,18 +48,15 @@ internal object KdbxRecordContentFingerprints {
         val pending = java.util.ArrayDeque<GroupKDBX>()
         pending.add(root)
         val fingerprints = linkedMapOf<String, String>()
+        val groupShells = linkedMapOf<String, String>()
         while (pending.isNotEmpty()) {
             val group = pending.removeFirst()
-            fingerprints[group.id.toString()] = MacWriter(sessionKey).apply {
-                field("format", "KDBX-GROUP-CONTENT-v1")
-                node(group, group.icon, group.id.toString(), group.parent?.id?.toString(), group.indexInParent)
-                field("title", group.title)
-                field("notes", group.notes)
-                bool("expanded", group.isExpanded)
-                optionalBool("search", group.enableSearching)
-                optionalBool("autoType", group.enableAutoType)
-                field("defaultAutoTypeSequence", group.defaultAutoTypeSequence)
-                field("lastTopVisibleEntry", group.lastTopVisibleEntry.toString())
+            val groupId = group.id.toString()
+            groupShells[groupId] = MacWriter(sessionKey).apply {
+                groupShell(group)
+            }.hex()
+            fingerprints[groupId] = MacWriter(sessionKey).apply {
+                groupShell(group)
                 val children = (group.getChildGroups().map { it.id.toString() to it.indexInParent } +
                     group.getChildEntries().map { it.id.toString() to it.indexInParent })
                     .sortedWith(compareBy<Pair<String, Int>> { it.second }.thenBy { it.first })
@@ -69,6 +72,8 @@ internal object KdbxRecordContentFingerprints {
             group.getChildGroups().forEach(pending::addLast)
         }
         require(fingerprints.keys == model.nodes.keys) { "KDBX changed during content inventory" }
+        val groupIds = model.nodes.filterValues { it.kind == KdbxModelSnapshotReader.Kind.GROUP }.keys
+        require(groupShells.keys == groupIds) { "Incomplete KDBX group shell inventory" }
         val deletions = linkedMapOf<String, String>()
         for ((id, tombstone) in model.tombstones) {
             deletions[id] = MacWriter(sessionKey).apply {
@@ -78,7 +83,7 @@ internal object KdbxRecordContentFingerprints {
                 field("timestampType", tombstone.deletionTimeType)
             }.hex()
         }
-        return Inventory(model, fingerprints.toMap(), deletions.toMap())
+        return Inventory(model, fingerprints.toMap(), groupShells.toMap(), deletions.toMap())
     }
 
     private class MacWriter(key: ByteArray) {
@@ -157,6 +162,18 @@ internal object KdbxRecordContentFingerprints {
                 field("$name.value", it.value)
                 instant("$name.updated", it.lastModificationTime)
             }
+        }
+
+        fun groupShell(group: GroupKDBX) {
+            field("format", "KDBX-GROUP-CONTENT-v1")
+            node(group, group.icon, group.id.toString(), group.parent?.id?.toString(), group.indexInParent)
+            field("title", group.title)
+            field("notes", group.notes)
+            bool("expanded", group.isExpanded)
+            optionalBool("search", group.enableSearching)
+            optionalBool("autoType", group.enableAutoType)
+            field("defaultAutoTypeSequence", group.defaultAutoTypeSequence)
+            field("lastTopVisibleEntry", group.lastTopVisibleEntry.toString())
         }
 
         fun node(value: NodeKDBXInterface, icon: IconImage, id: String, parentId: String?, index: Int) {
