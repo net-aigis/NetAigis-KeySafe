@@ -33,6 +33,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 ## XC checkout for interop
 
 Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
-feature tip. Phase-5 HTTP body bounds for `KdbxCoordinatorClient` are on
-`feature/coordinated-kdbx-20261014` at `c3f3b6d5` (64 MiB KDBX / 16 KiB control,
-aligned with KeySafe). That change is not dual-client proof.
+feature tip. Phase-5 HTTP body bounds for `KdbxCoordinatorClient` landed at
+`c3f3b6d5`; file-read bounds at `17d06afe` (64 MiB KDBX / 16 KiB control,
+aligned with KeySafe). TLS 1.2+ / fail-closed SSL errors follow on the same
+feature branch. Those changes are not dual-client proof.

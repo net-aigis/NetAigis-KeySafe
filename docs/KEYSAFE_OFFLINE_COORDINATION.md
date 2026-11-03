@@ -318,3 +318,14 @@ scenarios that still deny merge authorization. Android↔Go loopback tests with
 dummy ciphertext (`KEYSAFE_INTEGRATION_TESTS.md`) do not clear that list.
 Track open items in `docs/KEYSAFE_DUAL_CLIENT_SCENARIOS.md`. No automatic
 merge, save or publication is enabled.
+
+## Transport TLS and token handling (phase 5; auto-publish off)
+
+KeySafe coordinator HTTPS uses the platform trust store with TLS 1.2+ only
+(`CoordinatorTlsPolicy`). Cleartext is refused except for explicit loopback
+protocol tests; `network_security_config` mirrors that. Access tokens stay in
+AndroidKeyStore-wrapped SharedPreferences (`coordinated_kdbx`), excluded from
+backup/restore. KeePassXC enforces HTTPS (loopback HTTP exception), TLS 1.2+,
+peer verification without ignoring SSL errors, and keeps the bearer in encrypted
+KDBX custom data. Body size caps remain 64 MiB KDBX / 16 KiB control. None of
+this clears standing merge-authorization blockers or enables auto-publish.

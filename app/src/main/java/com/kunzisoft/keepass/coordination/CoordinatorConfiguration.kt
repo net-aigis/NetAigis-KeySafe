@@ -34,15 +34,21 @@ internal object CoordinatorConfiguration {
     fun put(context: Context, value: Config) {
         // Validate before storing credentials; invalid HTTP endpoints are rejected by the client.
         KdbxCoordinatorClient(value.url, value.id, value.token, "android").close()
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.ENCRYPT_MODE, key())
-        val ciphertext = cipher.doFinal(value.token.toByteArray(Charsets.UTF_8))
-        val prefs = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-        check(prefs.edit().putString("url", value.url).putString("id", value.id)
-            .putString("iv", Base64.encodeToString(cipher.iv, Base64.NO_WRAP))
-            .putString("encrypted_token", Base64.encodeToString(ciphertext, Base64.NO_WRAP))
-            .putBoolean("enable_offline_cache", value.enableOfflineCache)
-            .commit()) { "Failed to persist configuration" }
+        val tokenBytes = value.token.toByteArray(Charsets.UTF_8)
+        try {
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.ENCRYPT_MODE, key())
+            val ciphertext = cipher.doFinal(tokenBytes)
+            val prefs = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+            check(prefs.edit().putString("url", value.url).putString("id", value.id)
+                .putString("iv", Base64.encodeToString(cipher.iv, Base64.NO_WRAP))
+                .putString("encrypted_token", Base64.encodeToString(ciphertext, Base64.NO_WRAP))
+                .putBoolean("enable_offline_cache", value.enableOfflineCache)
+                .commit()) { "Failed to persist configuration" }
+            ciphertext.fill(0)
+        } finally {
+            tokenBytes.fill(0)
+        }
     }
 
     fun get(context: Context): Config? {

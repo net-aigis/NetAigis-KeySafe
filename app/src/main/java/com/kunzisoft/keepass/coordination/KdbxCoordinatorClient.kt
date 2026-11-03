@@ -69,6 +69,7 @@ class KdbxCoordinatorClient(
             connection.connectTimeout = 10_000
             connection.readTimeout = 40_000
             connection.instanceFollowRedirects = false // Never leak bearer or lease to another origin.
+            CoordinatorTlsPolicy.apply(connection)
             connection.setRequestProperty("Authorization", "Bearer $accessToken")
             connection.setRequestProperty("Accept", "application/json, application/octet-stream")
             connection.setRequestProperty("Cache-Control", "no-store")
