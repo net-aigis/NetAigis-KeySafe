@@ -30,7 +30,13 @@ internal object KdbxThreeCopyReview {
          * change explained by append-only additions with unchanged group shells.
          * Still not merge/write permission.
          */
-        val appendOrder: KdbxConcurrentAppendOrderReview.Report? = null
+        val appendOrder: KdbxConcurrentAppendOrderReview.Report? = null,
+        /**
+         * Always unauthorized while standing integrity blockers remain.
+         * Callers must not treat a conflict-free [decisions] list as publishable.
+         */
+        val mergeAuthorization: KdbxMergeAuthorizationGate.Decision =
+            KdbxMergeAuthorizationGate.evaluate(null)
     ) {
         val conflictIds: List<String> get() = decisions.filter { it.source == Source.CONFLICT }.map { it.id }
     }
@@ -136,7 +142,8 @@ internal object KdbxThreeCopyReview {
             KdbxSelectedTopologyPreflight.validate(root, selectedNodes)
         }
         val appendOrder = if (!hasConflict) null else appendOrderPreview(base, local, remote, decisions)
-        return Report(decisions, metadata, appendOrder)
+        val draft = Report(decisions, metadata, appendOrder)
+        return draft.copy(mergeAuthorization = KdbxMergeAuthorizationGate.requireDenied(draft))
     }
 
     /**

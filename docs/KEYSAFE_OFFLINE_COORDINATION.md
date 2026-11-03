@@ -228,3 +228,18 @@ for synthetic unit inventories that only build parent/child links.
 
 Parser-silent unknown XML/inner-header fields are still out of scope. No
 automatic merge, save or publication is enabled.
+
+## Explicit merge-authorization gate (phase 2N; still read-only)
+
+`KdbxMergeAuthorizationGate` records standing blockers that keep automatic
+merge/publish denied even when a three-copy review looks conflict-free:
+
+- parser-silent unknown XML elements
+- parser-silent unknown inner-header fields
+- absence of a validated lossless merge writer
+- absence of exclusive-lease revalidation for a merged upload
+- incomplete KeePassXC/KeySafe dual-client crash/recovery proofs
+
+`KdbxThreeCopyReview.Report.mergeAuthorization` is always unauthorized.
+Append-order previews and empty conflict lists never clear the gate. No
+automatic merge, save or publication is enabled.

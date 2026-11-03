@@ -181,4 +181,65 @@ class KdbxThreeCopyReviewTest {
         assertTrue(result.conflictIds.contains(entryId.toString()))
         assertEquals(null, result.appendOrder)
     }
+
+    @Test fun `history-only divergence conflicts without authorizing merge`() {
+        val base = copy()
+        val local = copy().also {
+            val entry = it.rootGroup!!.getChildEntries().single()
+            entry.history.add(EntryKDBX().also { hist ->
+                hist.nodeId = NodeIdUUID(UUID.randomUUID())
+                fixNodeTimes(hist)
+                hist.title = "hist-local"
+            })
+        }
+        val remote = copy().also {
+            val entry = it.rootGroup!!.getChildEntries().single()
+            entry.history.add(EntryKDBX().also { hist ->
+                hist.nodeId = NodeIdUUID(UUID.randomUUID())
+                fixNodeTimes(hist)
+                hist.title = "hist-remote"
+            })
+        }
+        val result = KdbxThreeCopyReview.read(base, local, remote)
+        assertEquals(KdbxThreeCopyReview.Source.CONFLICT, record(result))
+        assertFalse(result.mergeAuthorization.authorized)
+    }
+
+    @Test fun `delete versus move of the same entry is a conflict`() {
+        val folderId = UUID.randomUUID()
+        val base = copy().also {
+            val folder = GroupKDBX().also { g ->
+                g.nodeId = NodeIdUUID(folderId)
+                fixNodeTimes(g)
+                g.parent = it.rootGroup
+                it.rootGroup!!.addChildGroup(g)
+            }
+            // Keep the base entry under root; local deletes it, remote moves it.
+            assertTrue(folder.getChildEntries().isEmpty())
+        }
+        val local = copy(null).also {
+            val folder = GroupKDBX().also { g ->
+                g.nodeId = NodeIdUUID(folderId)
+                fixNodeTimes(g)
+                g.parent = it.rootGroup
+                it.rootGroup!!.addChildGroup(g)
+            }
+            assertTrue(folder.getChildEntries().isEmpty())
+        }
+        val remote = copy().also {
+            val folder = GroupKDBX().also { g ->
+                g.nodeId = NodeIdUUID(folderId)
+                fixNodeTimes(g)
+                g.parent = it.rootGroup
+                it.rootGroup!!.addChildGroup(g)
+            }
+            val entry = it.rootGroup!!.getChildEntries().single()
+            it.rootGroup!!.removeChildEntry(entry)
+            entry.parent = folder
+            folder.addChildEntry(entry)
+        }
+        val result = KdbxThreeCopyReview.read(base, local, remote)
+        assertEquals(KdbxThreeCopyReview.Source.CONFLICT, record(result))
+        assertFalse(result.mergeAuthorization.authorized)
+    }
 }
