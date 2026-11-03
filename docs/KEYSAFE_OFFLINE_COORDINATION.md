@@ -304,6 +304,13 @@ proofs belong in an instrumented or dual-client environment (phase 4). The
 standing gate blocker for a validated lossless merge writer remains until that
 evidence exists; auto-publish stays off.
 
+## Gated merge pipeline (phase 3D; auto-publish off)
+
+`KdbxGatedMergePipeline.attempt` composes strict load → three-copy review →
+conflict-free assemble → ciphertext write/reload → gated publisher. Empty or
+oversized inputs fail before crypto. The publisher still refuses every PUT
+while standing blockers remain. No automatic publication is enabled.
+
 ## Dual-client interoperability checklist (phase 4; auto-publish off)
 
 `KdbxDualClientProofStatus` lists the KeePassXC ↔ KeySafe ↔ coordinator
