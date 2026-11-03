@@ -69,7 +69,7 @@ class KdbxAssembledCiphertextWriterTest {
 
         val written = KdbxAssembledCiphertextWriter.writeAndStrictReload(
             assembled = assembled,
-            masterCredential = MasterCredential(password = "master-pass".toCharArray()),
+            masterCredential = MasterCredential("master-pass".toCharArray()),
             binaryCacheDirectory = tempFolder.newFolder("binaries")
         )
         assertTrue(written.ciphertext.isNotEmpty())
