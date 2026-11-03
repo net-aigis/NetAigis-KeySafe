@@ -297,6 +297,9 @@ remain later slices.
 `DatabaseKDBX`, then reopens the bytes with `refuseUnknownExtensions=true` and
 re-runs `KdbxModelSnapshotReader`. Callers still must keep base/local/remote
 originals, run `KdbxGatedMergePublisher` (which remains unauthorized), and
-complete dual-client proofs before any automatic publication. The standing
-gate blocker for a validated lossless merge writer is narrowed only after this
-path plus interop evidence are accepted; auto-publish stays off.
+complete dual-client proofs before any automatic publication.
+
+JVM unit tests cannot load `libaes`/`libargon2`, so ciphertext round-trip
+proofs belong in an instrumented or dual-client environment (phase 4). The
+standing gate blocker for a validated lossless merge writer remains until that
+evidence exists; auto-publish stays off.
