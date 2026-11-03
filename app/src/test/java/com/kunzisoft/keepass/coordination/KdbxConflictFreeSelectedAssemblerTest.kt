@@ -32,6 +32,15 @@ class KdbxConflictFreeSelectedAssemblerTest {
 
     private fun copy(password: String? = "unchanged"): DatabaseKDBX {
         val db = DatabaseKDBX()
+        // Database-wide timestamps must match across independently built copies,
+        // otherwise metadata review reports conflicts and assembly correctly refuses.
+        db.nameChanged = fixedTime()
+        db.descriptionChanged = fixedTime()
+        db.defaultUserNameChanged = fixedTime()
+        db.settingsChanged = fixedTime()
+        db.keyLastChanged = fixedTime()
+        db.recycleBinChanged = fixedTime()
+        db.entryTemplatesGroupChanged = fixedTime()
         val root = GroupKDBX().also { it.nodeId = NodeIdUUID(rootId); fixNodeTimes(it) }
         db.rootGroup = root
         if (password != null) {

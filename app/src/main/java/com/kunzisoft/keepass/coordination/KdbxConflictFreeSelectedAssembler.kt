@@ -34,10 +34,11 @@ internal object KdbxConflictFreeSelectedAssembler {
         require(report.appendOrder == null) {
             "Append-order previews are analysis-only and do not authorize assembly"
         }
-        require(report.metadata.decisions.all {
-            it.source == KdbxDatabaseMetadataReview.Source.UNCHANGED
-        }) {
-            "This assembler slice requires unchanged database-wide metadata"
+        val changedMetadata = report.metadata.decisions
+            .filter { it.source != KdbxDatabaseMetadataReview.Source.UNCHANGED }
+            .map { "${it.key}:${it.source}" }
+        require(changedMetadata.isEmpty()) {
+            "This assembler slice requires unchanged database-wide metadata; changed=$changedMetadata"
         }
         require(!report.mergeAuthorization.authorized) {
             "Assembly must not run under an authorized merge decision yet"
