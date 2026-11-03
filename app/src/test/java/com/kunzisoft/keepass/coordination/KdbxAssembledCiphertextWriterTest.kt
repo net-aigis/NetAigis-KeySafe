@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 package com.kunzisoft.keepass.coordination
 
+import com.kunzisoft.keepass.database.crypto.kdf.AesKdf
 import com.kunzisoft.keepass.database.element.DateInstant
 import com.kunzisoft.keepass.database.element.MasterCredential
 import com.kunzisoft.keepass.database.element.database.DatabaseKDBX
@@ -31,6 +32,7 @@ class KdbxAssembledCiphertextWriterTest {
 
     private val rootId = UUID.randomUUID()
     private val entryId = UUID.randomUUID()
+    private val sharedAesSeed = ByteArray(32) { (it + 1).toByte() }
     private fun fixedTime() = DateInstant(Instant(1_700_000_000_000L))
     private fun fixNodeTimes(node: NodeKDBXInterface) {
         node.creationTime = fixedTime()
@@ -41,6 +43,13 @@ class KdbxAssembledCiphertextWriterTest {
 
     private fun copy(password: String = "unchanged"): DatabaseKDBX {
         val db = DatabaseKDBX()
+        // Isolate KDF from the shared factory default and keep rounds cheap.
+        // Apply after header timestamps so setKeyRounds cannot bump settingsChanged.
+        val engine = AesKdf()
+        engine.parameters = engine.defaultParameters
+        engine.parameters.setByteArray(AesKdf.PARAM_SEED, sharedAesSeed.copyOf())
+        engine.setKeyRounds(10uL)
+        db.kdfEngine = engine
         db.nameChanged = fixedTime()
         db.descriptionChanged = fixedTime()
         db.defaultUserNameChanged = fixedTime()
@@ -48,8 +57,6 @@ class KdbxAssembledCiphertextWriterTest {
         db.keyLastChanged = fixedTime()
         db.recycleBinChanged = fixedTime()
         db.entryTemplatesGroupChanged = fixedTime()
-        // Keep unit-test KDF cheap; AES-KDF is the DatabaseKDBX default.
-        db.kdfEngine?.setKeyRounds(10uL)
         val root = GroupKDBX().also { it.nodeId = NodeIdUUID(rootId); fixNodeTimes(it) }
         db.rootGroup = root
         val entry = EntryKDBX().also {
