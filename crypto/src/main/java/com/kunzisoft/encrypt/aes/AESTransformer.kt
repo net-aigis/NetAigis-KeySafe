@@ -44,14 +44,18 @@ object AESTransformer {
         if (seed == null || key == null) {
             throw IOException("Invalid seed or key")
         }
-        return try {
-            NativeLib.init()
-            NativeAESKeyTransformer.nTransformKey(seed, key, rounds.toLong())
-        } catch (exception: Exception) {
-            Log.e(AESTransformer::class.java.simpleName, "Unable to perform native AES key transformation", exception)
-            // Fall back on the android crypto implementation
-            transformKeyInJVM(seed, key, rounds)
+        // NativeLib.init() returns false when libaes is absent; calling the JNI
+        // entry anyway throws UnsatisfiedLinkError (an Error, not Exception).
+        if (NativeLib.init()) {
+            try {
+                return NativeAESKeyTransformer.nTransformKey(seed, key, rounds.toLong())
+            } catch (error: UnsatisfiedLinkError) {
+                Log.e(AESTransformer::class.java.simpleName, "Native AES key transform unavailable", error)
+            } catch (exception: Exception) {
+                Log.e(AESTransformer::class.java.simpleName, "Unable to perform native AES key transformation", exception)
+            }
         }
+        return transformKeyInJVM(seed, key, rounds)
     }
 
     @SuppressLint("GetInstance")

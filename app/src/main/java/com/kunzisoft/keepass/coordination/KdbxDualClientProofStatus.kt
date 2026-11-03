@@ -16,7 +16,7 @@ internal object KdbxDualClientProofStatus {
         "offline edits on both clients with reconnect in either order",
         "simultaneous real-KDBX publish attempts",
         "crash-during-save recovery reopened in both KeePassXC and KeySafe",
-        "assembled ciphertext round-trip under native AES/Argon2"
+        "assembled ciphertext round-trip under native Argon2 / forced-native AES"
     )
 
     val gateBlocker: String =

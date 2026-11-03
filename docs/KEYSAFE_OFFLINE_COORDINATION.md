@@ -299,10 +299,11 @@ re-runs `KdbxModelSnapshotReader`. Callers still must keep base/local/remote
 originals, run `KdbxGatedMergePublisher` (which remains unauthorized), and
 complete dual-client proofs before any automatic publication.
 
-JVM unit tests cannot load `libaes`/`libargon2`, so ciphertext round-trip
-proofs belong in an instrumented or dual-client environment (phase 4). The
-standing gate blocker for a validated lossless merge writer remains until that
-evidence exists; auto-publish stays off.
+AES-KDF assemble→write→strict-reload is covered by JVM unit tests after
+`AESTransformer` falls back when `libaes` is absent. Argon2 (and forced-native
+AES) round-trips still need an instrumented or dual-client environment
+(phase 4). The standing gate blocker for a validated lossless merge writer
+remains until that evidence exists; auto-publish stays off.
 
 ## Gated merge pipeline (phase 3D; auto-publish off)
 
