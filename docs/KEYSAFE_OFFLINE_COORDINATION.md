@@ -287,6 +287,16 @@ from the winning side of each UUID decision. Preconditions (fail closed):
 - every metadata decision is `UNCHANGED`
 - merge authorization remains denied
 
-This does not serialize ciphertext, does not call `DatabaseKDBXMerger`, does not
-clear standing gate blockers, and does not publish. Metadata edits and
-attachment/custom-icon reconstruction remain later slices.
+This does not call `DatabaseKDBXMerger`, does not clear standing gate blockers,
+and does not publish. Metadata edits and attachment/custom-icon reconstruction
+remain later slices.
+
+## Assembled ciphertext write and strict reload (phase 3C; auto-publish off)
+
+`KdbxAssembledCiphertextWriter.writeAndStrictReload` serializes an assembled
+`DatabaseKDBX`, then reopens the bytes with `refuseUnknownExtensions=true` and
+re-runs `KdbxModelSnapshotReader`. Callers still must keep base/local/remote
+originals, run `KdbxGatedMergePublisher` (which remains unauthorized), and
+complete dual-client proofs before any automatic publication. The standing
+gate blocker for a validated lossless merge writer is narrowed only after this
+path plus interop evidence are accepted; auto-publish stays off.
