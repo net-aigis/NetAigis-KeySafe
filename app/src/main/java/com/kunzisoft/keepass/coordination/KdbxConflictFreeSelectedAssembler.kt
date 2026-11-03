@@ -79,7 +79,8 @@ internal object KdbxConflictFreeSelectedAssembler {
                 deleted != null && group == null && entry == null ->
                     tombstones.add(DeletedObject(deleted.uuid, deleted.deletionTime))
                 else -> throw IllegalArgumentException(
-                    "Winning side has an ambiguous or missing state for UUID $id"
+                    "Winning side has an ambiguous or missing state for UUID $id " +
+                        "(group=${group != null}, entry=${entry != null}, deleted=${deleted != null})"
                 )
             }
         }

@@ -44,14 +44,14 @@ class KdbxConflictFreeSelectedAssemblerTest {
         val root = GroupKDBX().also { it.nodeId = NodeIdUUID(rootId); fixNodeTimes(it) }
         db.rootGroup = root
         if (password != null) {
-            EntryKDBX().also {
+            val entry = EntryKDBX().also {
                 it.nodeId = NodeIdUUID(entryId)
                 fixNodeTimes(it)
-                it.parent = root
                 it.title = "entry"
                 it.password = password.toCharArray()
-                root.addChildEntry(it)
             }
+            // Index the entry; tree-only addChildEntry is invisible to getEntryById.
+            db.addEntryTo(entry, root)
         } else {
             db.deletedObjects.add(DeletedObject(entryId, fixedTime()))
         }
