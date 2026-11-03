@@ -9,10 +9,11 @@ import java.security.SecureRandom
  * cannot grant write access, and intentionally does not return any record HMACs.
  * The caller must hold each model stable for the whole comparison.
  *
- * This reports selected database-wide metadata and custom-icon changes,
- * but cannot decide unknown KDBX extensions, binary-pool reconstruction,
- * credential handling or revision/lease safety. Those remain
- * mandatory before any later implementation may write or upload a merged KDBX.
+ * This reports selected database-wide metadata and custom-icon changes.
+ * Callers must load each copy with [KdbxCoordinationLoadPolicy.REFUSE_UNKNOWN_EXTENSIONS]
+ * and pass [unknownExtensionsRefused]=true; otherwise merge authorization stays
+ * denied. Binary-pool reconstruction, credential handling and revision/lease
+ * safety remain mandatory before any later write or upload.
  *
  * When independent offline appends collide only on sibling membership/order,
  * [Report.appendOrder] may carry a deterministic ordering preview. That preview
@@ -32,6 +33,13 @@ internal object KdbxThreeCopyReview {
          */
         val appendOrder: KdbxConcurrentAppendOrderReview.Report? = null,
         /**
+         * True only when the caller attests that base/local/remote were each
+         * loaded with [KdbxCoordinationLoadPolicy.REFUSE_UNKNOWN_EXTENSIONS].
+         * Synthetic in-memory inventories used by unit tests may set this when
+         * they never passed through the permissive XML/inner-header parser.
+         */
+        val unknownExtensionsRefused: Boolean = false,
+        /**
          * Always unauthorized while standing integrity blockers remain.
          * Callers must not treat a conflict-free [decisions] list as publishable.
          */
@@ -44,8 +52,17 @@ internal object KdbxThreeCopyReview {
     /**
      * Generates the ephemeral key internally, uses it for *all three* copies,
      * and zeroes it even if inventory creation or comparison fails.
+     *
+     * @param unknownExtensionsRefused attest that each copy was loaded with
+     *   refuseUnknownExtensions (or is a synthetic model that never used the
+     *   permissive parser). Defaults to false and keeps merge unauthorized.
      */
-    fun read(base: DatabaseKDBX, local: DatabaseKDBX, remote: DatabaseKDBX): Report {
+    fun read(
+        base: DatabaseKDBX,
+        local: DatabaseKDBX,
+        remote: DatabaseKDBX,
+        unknownExtensionsRefused: Boolean = false
+    ): Report {
         val key = ByteArray(32)
         SecureRandom().nextBytes(key)
         try {
@@ -53,7 +70,8 @@ internal object KdbxThreeCopyReview {
                 KdbxRecordContentFingerprints.read(base, key),
                 KdbxRecordContentFingerprints.read(local, key),
                 KdbxRecordContentFingerprints.read(remote, key),
-                KdbxDatabaseMetadataReview.compare(base, local, remote, key)
+                KdbxDatabaseMetadataReview.compare(base, local, remote, key),
+                unknownExtensionsRefused
             )
         } finally {
             key.fill(0)
@@ -65,7 +83,8 @@ internal object KdbxThreeCopyReview {
         base: KdbxRecordContentFingerprints.Inventory,
         local: KdbxRecordContentFingerprints.Inventory,
         remote: KdbxRecordContentFingerprints.Inventory,
-        metadata: KdbxDatabaseMetadataReview.Report
+        metadata: KdbxDatabaseMetadataReview.Report,
+        unknownExtensionsRefused: Boolean
     ): Report {
         val all = listOf(base, local, remote)
         val root = base.model.rootGroupId
@@ -142,7 +161,12 @@ internal object KdbxThreeCopyReview {
             KdbxSelectedTopologyPreflight.validate(root, selectedNodes)
         }
         val appendOrder = if (!hasConflict) null else appendOrderPreview(base, local, remote, decisions)
-        val draft = Report(decisions, metadata, appendOrder)
+        val draft = Report(
+            decisions = decisions,
+            metadata = metadata,
+            appendOrder = appendOrder,
+            unknownExtensionsRefused = unknownExtensionsRefused
+        )
         return draft.copy(mergeAuthorization = KdbxMergeAuthorizationGate.requireDenied(draft))
     }
 

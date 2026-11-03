@@ -4,9 +4,9 @@ package com.kunzisoft.keepass.coordination
 /**
  * Explicit fail-closed gate for any future automatic KDBX merge/publish path.
  *
- * A conflict-free three-copy report is never sufficient authorization: parser
- * surfaces that silently drop unknown fields, missing writer/lease proofs and
- * incomplete interoperability tests remain hard blockers.
+ * A conflict-free three-copy report is never sufficient authorization: missing
+ * unknown-extension attestation, missing writer/lease proofs and incomplete
+ * interoperability tests remain hard blockers.
  */
 internal object KdbxMergeAuthorizationGate {
     data class Decision(
@@ -25,8 +25,6 @@ internal object KdbxMergeAuthorizationGate {
 
     /** Remaining integrity and safety blockers known at this KeySafe revision. */
     val standingBlockers: List<String> = listOf(
-        "parser-silent unknown KDBX XML elements are dropped on load",
-        "parser-silent unknown inner-header field IDs are ignored on load",
         "no validated lossless KDBX merge writer exists",
         "no exclusive-lease revalidation of the merge target is wired",
         "KeePassXC and KeySafe dual-client crash/recovery proofs are incomplete"
@@ -38,6 +36,11 @@ internal object KdbxMergeAuthorizationGate {
      */
     fun evaluate(report: KdbxThreeCopyReview.Report? = null): Decision {
         val blockers = ArrayList(standingBlockers)
+        if (report == null || !report.unknownExtensionsRefused) {
+            blockers.add(
+                "KDBX copies were not attested as loaded with refuseUnknownExtensions"
+            )
+        }
         if (report != null && report.conflictIds.isNotEmpty()) {
             blockers.add("three-copy review still reports unresolved record conflicts")
         }

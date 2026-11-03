@@ -32,7 +32,7 @@ class KdbxMergeAuthorizationGateTest {
     @Test fun `standing blockers always deny merge authorization`() {
         val decision = KdbxMergeAuthorizationGate.evaluate()
         assertFalse(decision.authorized)
-        assertTrue(decision.blockers.any { it.contains("unknown KDBX XML") })
+        assertTrue(decision.blockers.any { it.contains("refuseUnknownExtensions") })
         assertTrue(decision.blockers.any { it.contains("merge writer") })
     }
 
@@ -40,8 +40,22 @@ class KdbxMergeAuthorizationGateTest {
         val copy = db()
         val report = KdbxThreeCopyReview.read(copy, copy, copy)
         assertTrue(report.conflictIds.isEmpty())
+        assertFalse(report.unknownExtensionsRefused)
         assertFalse(report.mergeAuthorization.authorized)
-        assertTrue(report.mergeAuthorization.blockers.isNotEmpty())
+        assertTrue(report.mergeAuthorization.blockers.any { it.contains("refuseUnknownExtensions") })
+    }
+
+    @Test fun `attested unknown-extension refusal still denies without writer and lease`() {
+        val copy = db()
+        val report = KdbxThreeCopyReview.read(
+            copy, copy, copy,
+            unknownExtensionsRefused = KdbxCoordinationLoadPolicy.REFUSE_UNKNOWN_EXTENSIONS
+        )
+        assertTrue(report.unknownExtensionsRefused)
+        assertFalse(report.mergeAuthorization.authorized)
+        assertFalse(report.mergeAuthorization.blockers.any { it.contains("refuseUnknownExtensions") })
+        assertTrue(report.mergeAuthorization.blockers.any { it.contains("merge writer") })
+        assertTrue(report.mergeAuthorization.blockers.any { it.contains("lease") })
     }
 
     @Test fun `append-order preview does not clear the authorization gate`() {
@@ -74,7 +88,8 @@ class KdbxMergeAuthorizationGateTest {
         val report = KdbxThreeCopyReview.read(
             copyWith(null),
             copyWith(localEntry),
-            copyWith(remoteEntry)
+            copyWith(remoteEntry),
+            unknownExtensionsRefused = true
         )
         assertTrue(report.appendOrder != null)
         assertFalse(report.mergeAuthorization.authorized)

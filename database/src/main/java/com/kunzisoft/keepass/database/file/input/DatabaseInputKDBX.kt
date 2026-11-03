@@ -117,6 +117,17 @@ class DatabaseInputKDBX(database: DatabaseKDBX)
 
     private var isRAMSufficient: (memoryWanted: ULong) -> Boolean = { true }
 
+    /**
+     * When true, unknown XML elements and unknown inner-header field IDs throw
+     * instead of being silently skipped. Default false keeps everyday KeePassDX /
+     * KeePassXC opens permissive; coordination merge candidates must enable this.
+     */
+    private var refuseUnknownExtensions: Boolean = false
+
+    fun setRefuseUnknownExtensions(refuse: Boolean) {
+        refuseUnknownExtensions = refuse
+    }
+
     fun setMethodToCheckMemoryForBinary(method: (memoryWanted: ULong) -> Boolean) {
         this.isRAMSufficient = method
     }
@@ -285,6 +296,13 @@ class DatabaseInputKDBX(database: DatabaseKDBX)
                         }
                     }
                 }
+                else -> {
+                    // Payload for non-Binary fields was already consumed above.
+                    KdbxUnknownExtensionGuard.refuseUnknownInnerHeaderField(
+                        fieldId,
+                        refuseUnknownExtensions
+                    )
+                }
             }
         }
     }
@@ -427,6 +445,8 @@ class DatabaseInputKDBX(database: DatabaseKDBX)
                 return switchContext(ctx, KdbContext.Binaries, xpp)
             } else if (name.equals(DatabaseKDBXXML.ElemCustomData, ignoreCase = true)) {
                 return switchContext(ctx, KdbContext.CustomData, xpp)
+            } else {
+                readUnknown(xpp)
             }
 
             KdbContext.MemoryProtection -> if (name.equals(DatabaseKDBXXML.ElemProtTitle, ignoreCase = true)) {
@@ -651,6 +671,8 @@ class DatabaseInputKDBX(database: DatabaseKDBX)
                 ctxBinaryName = readString(xpp)
             } else if (name.equals(DatabaseKDBXXML.ElemValue, ignoreCase = true)) {
                 ctxBinaryValue = readBinary(xpp)
+            } else {
+                readUnknown(xpp)
             }
 
             KdbContext.EntryAutoType -> if (name.equals(DatabaseKDBXXML.ElemAutoTypeEnabled, ignoreCase = true)) {
@@ -882,6 +904,10 @@ class DatabaseInputKDBX(database: DatabaseKDBX)
 
     @Throws(XmlPullParserException::class, IOException::class)
     private fun readUnknown(xpp: XmlPullParser) {
+        KdbxUnknownExtensionGuard.refuseUnknownXmlElement(
+            xpp.name ?: "",
+            refuseUnknownExtensions
+        )
         if (xpp.isEmptyElementTag) return
 
         readProtectedBase64String(xpp)

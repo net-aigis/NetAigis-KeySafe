@@ -214,9 +214,8 @@ KDF salt/seed (`S`) and optional secret-key (`K`) bytes are compared only by
 presence, type and length; raw secret material never leaves the review API.
 Unsupported VariantDictionary value types fail closed.
 
-Still **not** covered by this phase: parser-silent unknown XML elements and
-unknown inner-header field IDs. Those remain mandatory blockers before any
-merge/write authorization. No automatic merge, save or publication is enabled.
+Unknown XML/inner-header handling is covered later (phase 2O). No automatic
+merge, save or publication is enabled.
 
 ## Attachment pool and index orphan review (phase 2M; still read-only)
 
@@ -226,20 +225,36 @@ key and decoded content, including blobs that no entry references.
 reachable from the root tree (orphaned indexes). Empty indexes remain allowed
 for synthetic unit inventories that only build parent/child links.
 
-Parser-silent unknown XML/inner-header fields are still out of scope. No
-automatic merge, save or publication is enabled.
+Unknown XML/inner-header handling is covered later (phase 2O). No automatic
+merge, save or publication is enabled.
 
 ## Explicit merge-authorization gate (phase 2N; still read-only)
 
 `KdbxMergeAuthorizationGate` records standing blockers that keep automatic
 merge/publish denied even when a three-copy review looks conflict-free:
 
-- parser-silent unknown XML elements
-- parser-silent unknown inner-header fields
 - absence of a validated lossless merge writer
 - absence of exclusive-lease revalidation for a merged upload
 - incomplete KeePassXC/KeySafe dual-client crash/recovery proofs
 
-`KdbxThreeCopyReview.Report.mergeAuthorization` is always unauthorized.
-Append-order previews and empty conflict lists never clear the gate. No
-automatic merge, save or publication is enabled.
+In addition, a report that does not attest
+`unknownExtensionsRefused` (phase 2O) keeps merge unauthorized.
+`KdbxThreeCopyReview.Report.mergeAuthorization` is always unauthorized while
+those conditions hold. Append-order previews and empty conflict lists never
+clear the gate. No automatic merge, save or publication is enabled.
+
+## Opt-in refuse of unknown KDBX extensions (phase 2O; still no auto-publish)
+
+`DatabaseInputKDBX` accepts `setRefuseUnknownExtensions(true)`. In that mode:
+
+- unknown XML elements throw instead of `readUnknown` skipping them
+- unknown inner-header field IDs throw instead of discarding their payload
+- Meta and EntryBinary unknown children route through the same policy
+
+`Database.loadData` / `reloadData` expose `refuseUnknownExtensions` (default
+`false`) so everyday UI opens stay permissive. Coordination merge candidates
+must load with `KdbxCoordinationLoadPolicy.REFUSE_UNKNOWN_EXTENSIONS` and pass
+`unknownExtensionsRefused=true` into `KdbxThreeCopyReview.read`. Without that
+attestation the authorization gate still denies. No automatic merge, save or
+publication is enabled; writer, lease revalidation and dual-client proofs
+remain standing blockers.

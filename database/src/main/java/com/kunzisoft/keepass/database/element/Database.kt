@@ -550,7 +550,14 @@ open class Database {
         cacheDirectory: File,
         limits: Limits,
         fixDuplicateUUID: Boolean,
-        progressTaskUpdater: ProgressTaskUpdater?
+        progressTaskUpdater: ProgressTaskUpdater?,
+        /**
+         * When true, KDBX XML and inner-header extensions unknown to this parser
+         * fail closed. Everyday UI must leave this false; coordination merge
+         * candidates must set it true before any three-copy review that could
+         * later feed a write path.
+         */
+        refuseUnknownExtensions: Boolean = false
     ) {
         // Check if the file is writable
         this.isReadOnly = readOnly
@@ -585,6 +592,7 @@ open class Database {
                             setMethodToCheckMemoryForBinary { memoryWanted ->
                                 limits.isMemorySufficientForBinary(memoryWanted)
                             }
+                            setRefuseUnknownExtensions(refuseUnknownExtensions)
                             openDatabase(
                                 databaseInputStream,
                                 progressTaskUpdater
@@ -704,7 +712,8 @@ open class Database {
     fun reloadData(
         databaseStream: InputStream,
         limits: Limits,
-        progressTaskUpdater: ProgressTaskUpdater?
+        progressTaskUpdater: ProgressTaskUpdater?,
+        refuseUnknownExtensions: Boolean = false
     ) {
         try {
             kdfEngine?.checkLimits(limits)
@@ -726,6 +735,7 @@ open class Database {
                         setMethodToCheckMemoryForBinary { memoryWanted ->
                             limits.isMemorySufficientForBinary(memoryWanted)
                         }
+                        setRefuseUnknownExtensions(refuseUnknownExtensions)
                         openDatabase(databaseInputStream, progressTaskUpdater) {
                             this@Database.mDatabaseKDBX?.let { thisDatabaseKDBX ->
                                 databaseKDBX.copyMasterKeyFrom(thisDatabaseKDBX)
