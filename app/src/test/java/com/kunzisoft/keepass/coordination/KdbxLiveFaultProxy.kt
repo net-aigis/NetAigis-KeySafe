@@ -19,9 +19,11 @@ import java.util.concurrent.Executors
  */
 internal class KdbxLiveFaultProxy(
     private val backend: String,
-    private val interceptPut: (String, ByteArray) -> Mode
+    private val interceptPut: (String, ByteArray) -> Mode = { _, _ -> Mode.NORMAL },
+    private val interceptGetFile: () -> GetMode = { GetMode.NORMAL }
 ) : AutoCloseable {
     enum class Mode { NORMAL, REJECT_BEFORE_FORWARD, ACK_LOST }
+    enum class GetMode { NORMAL, REJECT_BEFORE_FORWARD, TRUNCATE_HALF }
 
     private val listener = ServerSocket(0, 16, InetAddress.getByName("127.0.0.1"))
     private val executor = Executors.newCachedThreadPool { task ->
@@ -77,17 +79,25 @@ internal class KdbxLiveFaultProxy(
         return result
     }
 
-    private fun respond(socket: Socket, code: Int, body: ByteArray, etag: String?) {
+    private fun respond(socket: Socket, code: Int, body: ByteArray, etag: String?, truncateHalf: Boolean = false) {
+        val sendBody = if (truncateHalf && body.isNotEmpty()) {
+            body.copyOf(body.size / 2)
+        } else {
+            body
+        }
+        // Announce the full length, then close after a partial body so the
+        // client cannot treat truncated ciphertext as a successful download.
+        val declaredLength = if (truncateHalf) body.size else sendBody.size
         val headers = buildString {
             append("HTTP/1.1 $code Test\r\n")
-            append("Content-Length: ${body.size}\r\n")
+            append("Content-Length: $declaredLength\r\n")
             append("Connection: close\r\n")
             if (etag != null) append("ETag: $etag\r\n")
             append("\r\n")
         }
         socket.getOutputStream().apply {
             write(headers.toByteArray(StandardCharsets.US_ASCII))
-            write(body)
+            write(sendBody)
             flush()
         }
     }
@@ -113,8 +123,17 @@ internal class KdbxLiveFaultProxy(
         }
         val length = headers["content-length"]?.toIntOrNull() ?: 0
         val body = requestBody(input, length)
-        val mode = if (method == "PUT") interceptPut(path, body) else Mode.NORMAL
-        if (mode == Mode.REJECT_BEFORE_FORWARD) {
+        val putMode = if (method == "PUT") interceptPut(path, body) else Mode.NORMAL
+        if (putMode == Mode.REJECT_BEFORE_FORWARD) {
+            respond(socket, 503, byteArrayOf(), null)
+            return
+        }
+        val getMode = if (method == "GET" && path.endsWith("/file")) {
+            interceptGetFile()
+        } else {
+            GetMode.NORMAL
+        }
+        if (getMode == GetMode.REJECT_BEFORE_FORWARD) {
             respond(socket, 503, byteArrayOf(), null)
             return
         }
@@ -136,11 +155,17 @@ internal class KdbxLiveFaultProxy(
             val status = connection.responseCode
             val reply = (if (status in 200..299) connection.inputStream else connection.errorStream)
                 ?.use { it.readBytes() } ?: byteArrayOf()
-            if (mode == Mode.ACK_LOST) {
+            if (putMode == Mode.ACK_LOST) {
                 check(status == 200) { "Backend did not commit before simulated lost acknowledgement" }
                 return
             }
-            respond(socket, status, reply, connection.getHeaderField("ETag"))
+            respond(
+                socket,
+                status,
+                reply,
+                connection.getHeaderField("ETag"),
+                truncateHalf = getMode == GetMode.TRUNCATE_HALF && status == 200
+            )
         } finally {
             connection.disconnect()
         }

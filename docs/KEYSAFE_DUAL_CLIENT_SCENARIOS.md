@@ -13,6 +13,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 - PUT interrupted before the coordinator sees the body
 - Assembled AES-KDF KDBX publish + strict reload through the live Go coordinator
 - Interrupted / lost-ack real AES-KDF upload fault cases (Android↔Go only)
+- Truncated and reject-before-forward real AES-KDF download fault cases
+  (Android↔Go only; retry/direct reader still reloads ciphertext)
 - Second Android client sees busy lease on a real-ciphertext database id
   (`KdbxLiveRealCiphertextIntegrationTest`; still no KeePassXC)
 
@@ -24,7 +26,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 | Android opens the same revision the XC client just published | open |
 | Lease expiry / lease loss during an edit on each client | open |
 | Interrupted upload with real KDBX ciphertext on XC and Android | partial (Android AES-KDF interrupt+lost-ack proven; XC still open) |
-| Interrupted download with real KDBX ciphertext on XC and Android | open (Android AES-KDF happy-path download/reload proven; interrupt+XC still open) |
+| Interrupted download with real KDBX ciphertext on XC and Android | partial (Android AES-KDF truncate+reject-before-forward proven; XC still open) |
 | Second client detects an active lease held by the first | partial (Android↔Go busy lease proven; XC still open) |
 | Offline edit on Android only, then reconnect | partial (cache/recovery unit tests; not XC) |
 | Offline edit on desktop only, then reconnect | open |
@@ -39,6 +41,6 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 
 Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
 feature tip `213c1132` on `feature/coordinated-kdbx-20261014`: HTTP/file body
-bounds, TLS 1.2+/fail-closed SSL, settings-UI validation, and unit-tested CoordinatorConfigValidation
-(64 MiB KDBX / 16 KiB control, aligned with KeySafe). Those XC-only changes are
-not dual-client proof.
+bounds, TLS 1.2+/fail-closed SSL, settings-UI validation, and unit-tested
+CoordinatorConfigValidation (64 MiB KDBX / 16 KiB control, aligned with
+KeySafe). Those XC-only changes are not dual-client proof.

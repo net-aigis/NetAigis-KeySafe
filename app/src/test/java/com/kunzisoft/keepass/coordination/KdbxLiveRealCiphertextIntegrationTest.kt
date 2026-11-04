@@ -167,4 +167,76 @@ class KdbxLiveRealCiphertextIntegrationTest {
         }
         assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
     }
+
+    @Test
+    fun `truncated real AES-KDF download fails closed then direct retry reloads ciphertext`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("dl-bin"),
+            localPassword = "download-secret"
+        )
+        val database = databaseId("dlintr")
+        client(url, database, "publisher").use { publisher ->
+            publisher.acquire()
+            publisher.publish(fixture.ciphertext)
+        }
+        val attempts = AtomicInteger(0)
+        KdbxLiveFaultProxy(
+            backend = url,
+            interceptGetFile = {
+                if (attempts.getAndIncrement() == 0) {
+                    KdbxLiveFaultProxy.GetMode.TRUNCATE_HALF
+                } else {
+                    KdbxLiveFaultProxy.GetMode.NORMAL
+                }
+            }
+        ).use { proxy ->
+            client(proxy.url, database, "broken").use { broken ->
+                mustThrow<IOException> { broken.downloadReadOnly() }
+            }
+            client(proxy.url, database, "retry").use { retry ->
+                val downloaded = retry.downloadReadOnly()
+                check(downloaded != null && downloaded.contentEquals(fixture.ciphertext))
+                val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                    encryptedKdbx = downloaded,
+                    masterCredential = MasterCredential(
+                        KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                    ),
+                    binaryCacheDirectory = tempFolder.newFolder("dl-reload")
+                )
+                assertTrue(
+                    reloaded.database.getEntryById(fixture.entryId)!!.password
+                        .contentEquals(fixture.entryPassword.toCharArray())
+                )
+            }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
+    fun `rejected real AES-KDF download leaves server ciphertext intact for later readers`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("dlrej-bin"),
+            localPassword = "dl-reject-secret"
+        )
+        val database = databaseId("dlrej")
+        client(url, database, "publisher").use { publisher ->
+            publisher.acquire()
+            publisher.publish(fixture.ciphertext)
+        }
+        KdbxLiveFaultProxy(
+            backend = url,
+            interceptGetFile = { KdbxLiveFaultProxy.GetMode.REJECT_BEFORE_FORWARD }
+        ).use { proxy ->
+            client(proxy.url, database, "blocked").use { blocked ->
+                mustThrow<IOException> { blocked.downloadReadOnly() }
+            }
+        }
+        client(url, database, "observer").use { observer ->
+            val downloaded = observer.downloadReadOnly()
+            check(downloaded != null && downloaded.contentEquals(fixture.ciphertext))
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
 }
