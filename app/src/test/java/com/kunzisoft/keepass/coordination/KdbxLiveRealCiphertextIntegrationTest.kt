@@ -3,6 +3,8 @@ package com.kunzisoft.keepass.coordination
 
 import com.kunzisoft.keepass.database.element.MasterCredential
 import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URI
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 import org.junit.Assert.assertFalse
@@ -209,6 +211,60 @@ class KdbxLiveRealCiphertextIntegrationTest {
                         .contentEquals(fixture.entryPassword.toCharArray())
                 )
             }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
+    fun `external lease revocation blocks stale real AES-KDF publish then new owner wins`() {
+        val url = requireLiveUrl()
+        val stale = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("stale-lease-bin"),
+            localPassword = "stale-lease-secret"
+        )
+        val winner = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("winner-lease-bin"),
+            localPassword = "winner-lease-secret"
+        )
+        val database = databaseId("lloss")
+        val old = client(url, database, "old")
+        try {
+            old.acquire()
+            val leaseField = KdbxCoordinatorClient::class.java.getDeclaredField("lease")
+            leaseField.isAccessible = true
+            val oldLease = leaseField.get(old) as String
+            val connection = URI("$url/v1/databases/$database/lock").toURL()
+                .openConnection() as HttpURLConnection
+            try {
+                connection.requestMethod = "DELETE"
+                connection.setRequestProperty("Authorization", "Bearer $token")
+                connection.setRequestProperty("X-KDBX-Lease", oldLease)
+                check(connection.responseCode == 204) { "Could not revoke lease" }
+            } finally {
+                connection.disconnect()
+            }
+            client(url, database, "new").use { current ->
+                current.acquire()
+                current.publish(winner.ciphertext)
+                mustThrow<KdbxCoordinatorClient.LostLeaseException> {
+                    old.publish(stale.ciphertext)
+                }
+                val downloaded = current.downloadReadOnly()
+                check(downloaded != null && downloaded.contentEquals(winner.ciphertext))
+                val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                    encryptedKdbx = downloaded,
+                    masterCredential = MasterCredential(
+                        KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                    ),
+                    binaryCacheDirectory = tempFolder.newFolder("lloss-reload")
+                )
+                assertTrue(
+                    reloaded.database.getEntryById(winner.entryId)!!.password
+                        .contentEquals(winner.entryPassword.toCharArray())
+                )
+            }
+        } finally {
+            runCatching { old.close() }
         }
         assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
     }

@@ -17,6 +17,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   (Android↔Go only; retry/direct reader still reloads ciphertext)
 - Second Android client sees busy lease on a real-ciphertext database id
   (`KdbxLiveRealCiphertextIntegrationTest`; still no KeePassXC)
+- External lease revocation blocks a stale Android publish of real AES-KDF
+  ciphertext; the new owner’s revision reloads (Android↔Go only)
 
 ## Still required before clearing the dual-client gate blocker
 
@@ -24,7 +26,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 | --- | --- |
 | KeePassXC opens and edits the shared KDBX against the real coordinator | open |
 | Android opens the same revision the XC client just published | open |
-| Lease expiry / lease loss during an edit on each client | open |
+| Lease expiry / lease loss during an edit on each client | partial (Android external revocation + stale real AES-KDF publish blocked; XC still open) |
 | Interrupted upload with real KDBX ciphertext on XC and Android | partial (Android AES-KDF interrupt+lost-ack proven; XC still open) |
 | Interrupted download with real KDBX ciphertext on XC and Android | partial (Android AES-KDF truncate+reject-before-forward proven; XC still open) |
 | Second client detects an active lease held by the first | partial (Android↔Go busy lease proven; XC still open) |
