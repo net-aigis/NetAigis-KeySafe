@@ -21,6 +21,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   ciphertext; the new owner’s revision reloads (Android↔Go only)
 - Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one
   winner, one stale (412); committed ciphertext reloads (Android↔Go only)
+- Mismatched ETag on real AES-KDF download fails closed; direct reader still
+  reloads server ciphertext (Android↔Go only)
 
 ## Still required before clearing the dual-client gate blocker
 

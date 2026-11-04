@@ -383,4 +383,42 @@ class KdbxLiveRealCiphertextIntegrationTest {
         }
         assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
     }
+
+    @Test
+    fun `mismatched ETag on real AES-KDF download fails closed then direct reader reloads`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("dletag-bin"),
+            localPassword = "dl-etag-secret"
+        )
+        val database = databaseId("dletag")
+        client(url, database, "publisher").use { publisher ->
+            publisher.acquire()
+            publisher.publish(fixture.ciphertext)
+        }
+        KdbxLiveFaultProxy(
+            backend = url,
+            interceptGetFile = { KdbxLiveFaultProxy.GetMode.WRONG_ETAG }
+        ).use { proxy ->
+            client(proxy.url, database, "tampered").use { tampered ->
+                mustThrow<IOException> { tampered.downloadReadOnly() }
+            }
+        }
+        client(url, database, "observer").use { observer ->
+            val downloaded = observer.downloadReadOnly()
+            check(downloaded != null && downloaded.contentEquals(fixture.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = downloaded,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("dletag-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(fixture.entryId)!!.password
+                    .contentEquals(fixture.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
 }

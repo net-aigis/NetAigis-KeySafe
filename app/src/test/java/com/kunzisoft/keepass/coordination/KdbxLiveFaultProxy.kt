@@ -23,7 +23,7 @@ internal class KdbxLiveFaultProxy(
     private val interceptGetFile: () -> GetMode = { GetMode.NORMAL }
 ) : AutoCloseable {
     enum class Mode { NORMAL, REJECT_BEFORE_FORWARD, ACK_LOST }
-    enum class GetMode { NORMAL, REJECT_BEFORE_FORWARD, TRUNCATE_HALF }
+    enum class GetMode { NORMAL, REJECT_BEFORE_FORWARD, TRUNCATE_HALF, WRONG_ETAG }
 
     private val listener = ServerSocket(0, 16, InetAddress.getByName("127.0.0.1"))
     private val executor = Executors.newCachedThreadPool { task ->
@@ -159,11 +159,17 @@ internal class KdbxLiveFaultProxy(
                 check(status == 200) { "Backend did not commit before simulated lost acknowledgement" }
                 return
             }
+            val etag = when {
+                getMode == GetMode.WRONG_ETAG && status == 200 ->
+                    // Valid-looking hex that must not match the body SHA-256.
+                    "\"" + "a".repeat(64) + "\""
+                else -> connection.getHeaderField("ETag")
+            }
             respond(
                 socket,
                 status,
                 reply,
-                connection.getHeaderField("ETag"),
+                etag,
                 truncateHalf = getMode == GetMode.TRUNCATE_HALF && status == 200
             )
         } finally {
