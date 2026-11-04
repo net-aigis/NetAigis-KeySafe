@@ -34,7 +34,10 @@ internal object KdbxLiveRealCiphertextFixtures {
         val entryPassword: String
     )
 
-    fun assembledLocalEditCiphertext(binaryCacheDirectory: File): Assembled {
+    fun assembledLocalEditCiphertext(
+        binaryCacheDirectory: File,
+        localPassword: String = "live-secret"
+    ): Assembled {
         val rootId = UUID.randomUUID()
         val entryId = UUID.randomUUID()
         fun copy(password: String): DatabaseKDBX {
@@ -63,7 +66,7 @@ internal object KdbxLiveRealCiphertextFixtures {
             return db
         }
         val base = copy("unchanged")
-        val local = copy("live-secret")
+        val local = copy(localPassword)
         val remote = copy("unchanged")
         val report = KdbxThreeCopyReview.read(base, local, remote, unknownExtensionsRefused = true)
         check(!report.mergeAuthorization.authorized)
@@ -74,6 +77,6 @@ internal object KdbxLiveRealCiphertextFixtures {
             binaryCacheDirectory = binaryCacheDirectory
         )
         check(written.ciphertext.isNotEmpty())
-        return Assembled(entryId, written.ciphertext, "live-secret")
+        return Assembled(entryId, written.ciphertext, localPassword)
     }
 }

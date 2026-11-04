@@ -17,8 +17,10 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
 5. Proxy blocks first PUT before contacting Go. Existing remote version remains
    unchanged; subsequent valid save succeeds.
 6. Assembled AES-KDF KDBX ciphertext (not dummy bytes) publishes through the
-   live Go coordinator and reloads under strict unknown-extension refusal.
-   This is still Android↔Go only; KeePassXC dual-client proofs remain open.
+   live Go coordinator, survives reject-before-forward and lost-ack fault
+   proxies, and reloads under strict unknown-extension refusal. Busy-lease
+   detection is covered for a second Android client. Still Android↔Go only;
+   KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
    They run under Go's race detector.

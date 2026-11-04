@@ -12,6 +12,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 - PUT committed but HTTP acknowledgement lost
 - PUT interrupted before the coordinator sees the body
 - Assembled AES-KDF KDBX publish + strict reload through the live Go coordinator
+- Interrupted / lost-ack real AES-KDF upload fault cases (Android↔Go only)
+- Second Android client sees busy lease on a real-ciphertext database id
   (`KdbxLiveRealCiphertextIntegrationTest`; still no KeePassXC)
 
 ## Still required before clearing the dual-client gate blocker
@@ -20,10 +22,10 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 | --- | --- |
 | KeePassXC opens and edits the shared KDBX against the real coordinator | open |
 | Android opens the same revision the XC client just published | open |
-| Second client detects an active lease held by the first | open |
 | Lease expiry / lease loss during an edit on each client | open |
-| Interrupted upload with real KDBX ciphertext on XC and Android | open (Android AES-KDF happy-path publish proven; interrupt+XC still open) |
+| Interrupted upload with real KDBX ciphertext on XC and Android | partial (Android AES-KDF interrupt+lost-ack proven; XC still open) |
 | Interrupted download with real KDBX ciphertext on XC and Android | open (Android AES-KDF happy-path download/reload proven; interrupt+XC still open) |
+| Second client detects an active lease held by the first | partial (Android↔Go busy lease proven; XC still open) |
 | Offline edit on Android only, then reconnect | partial (cache/recovery unit tests; not XC) |
 | Offline edit on desktop only, then reconnect | open |
 | Two independent offline edits, reconnect in either order | open |

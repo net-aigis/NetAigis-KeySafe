@@ -99,9 +99,11 @@ jobs:
               raise SystemExit(
                   f'Expected one live real-ciphertext integration report, got {len(real_reports)}')
           real_suite = ET.parse(real_reports[0]).getroot()
-          if int(real_suite.get('tests', '0')) < 1 or int(real_suite.get('skipped', '0')) != 0:
-              raise SystemExit('Live real-ciphertext integration test was not executed or was skipped')
-          print('Live Kotlin/Go real AES-KDF ciphertext test executed without skips')
+          if int(real_suite.get('tests', '0')) < 4 or int(real_suite.get('skipped', '0')) != 0:
+              raise SystemExit(
+                  'Live real-ciphertext integration tests missing/skipped '
+                  f"(tests={real_suite.get('tests')}, skipped={real_suite.get('skipped')})")
+          print('Live Kotlin/Go real AES-KDF ciphertext tests executed without skips')
           PYTEST
       - name: Preserve built APK for testing
         if: success()
