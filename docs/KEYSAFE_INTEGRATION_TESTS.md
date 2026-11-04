@@ -23,8 +23,9 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    covered for a second Android client, external lease revocation blocks a stale
    real AES-KDF publish while the new owner’s ciphertext reloads, and two
    concurrent same-base real AES-KDF PUTs yield exactly one winner (412 for the
-   loser), and a mismatched download ETag fails closed while a direct reader
-   still reloads. Still Android↔Go only; KeePassXC dual-client proofs remain open.
+   loser), a mismatched download ETag fails closed while a direct reader still
+   reloads, and a failed lease renew after real AES-KDF publish blocks further
+   writes. Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
    They run under Go's race detector.

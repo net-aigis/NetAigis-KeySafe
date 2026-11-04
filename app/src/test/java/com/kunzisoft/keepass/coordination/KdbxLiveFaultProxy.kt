@@ -20,7 +20,8 @@ import java.util.concurrent.Executors
 internal class KdbxLiveFaultProxy(
     private val backend: String,
     private val interceptPut: (String, ByteArray) -> Mode = { _, _ -> Mode.NORMAL },
-    private val interceptGetFile: () -> GetMode = { GetMode.NORMAL }
+    private val interceptGetFile: () -> GetMode = { GetMode.NORMAL },
+    private val rejectRenew: () -> Boolean = { false }
 ) : AutoCloseable {
     enum class Mode { NORMAL, REJECT_BEFORE_FORWARD, ACK_LOST }
     enum class GetMode { NORMAL, REJECT_BEFORE_FORWARD, TRUNCATE_HALF, WRONG_ETAG }
@@ -125,6 +126,10 @@ internal class KdbxLiveFaultProxy(
         val body = requestBody(input, length)
         val putMode = if (method == "PUT") interceptPut(path, body) else Mode.NORMAL
         if (putMode == Mode.REJECT_BEFORE_FORWARD) {
+            respond(socket, 503, byteArrayOf(), null)
+            return
+        }
+        if (method == "POST" && path.endsWith("/renew") && rejectRenew()) {
             respond(socket, 503, byteArrayOf(), null)
             return
         }

@@ -385,6 +385,49 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `failed lease renew after real AES-KDF publish blocks further writes`() {
+        val url = requireLiveUrl()
+        val published = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("renew-bin"),
+            localPassword = "renew-secret"
+        )
+        val blocked = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("renew-blocked-bin"),
+            localPassword = "renew-blocked-secret"
+        )
+        val database = databaseId("renew")
+        KdbxLiveFaultProxy(backend = url, rejectRenew = { true }).use { proxy ->
+            client(proxy.url, database, "editor").use { editor ->
+                editor.acquire()
+                editor.publish(published.ciphertext)
+                val renew = KdbxCoordinatorClient::class.java.getDeclaredMethod("renew")
+                renew.isAccessible = true
+                try {
+                    renew.invoke(editor)
+                    throw AssertionError("Expected LostLeaseException from renew")
+                } catch (e: java.lang.reflect.InvocationTargetException) {
+                    val cause = e.cause
+                    if (cause !is KdbxCoordinatorClient.LostLeaseException) {
+                        throw AssertionError(
+                            "Expected LostLeaseException, got ${cause?.javaClass?.simpleName}: ${cause?.message}",
+                            cause
+                        )
+                    }
+                }
+                assertFalse(editor.hasLease())
+                mustThrow<KdbxCoordinatorClient.LostLeaseException> {
+                    editor.publish(blocked.ciphertext)
+                }
+            }
+        }
+        client(url, database, "observer").use { observer ->
+            val downloaded = observer.downloadReadOnly()
+            check(downloaded != null && downloaded.contentEquals(published.ciphertext))
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `mismatched ETag on real AES-KDF download fails closed then direct reader reloads`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
