@@ -46,7 +46,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 ## XC checkout for interop
 
 Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
-feature tip `000f06a8` on `feature/coordinated-kdbx-20261014`: HTTP/file body
+feature tip `f8217b74` on `feature/coordinated-kdbx-20261014`: HTTP/file body
 bounds, TLS 1.2+/fail-closed SSL, settings-UI validation, shared client config checks, unit-tested lease-response parsing, publish-ack matching,
-download hash/ETag binding, and shared CoordinatorByteLimits (64 MiB KDBX / 16 KiB
+download hash/ETag binding, shared JSON field extraction, and CoordinatorByteLimits (64 MiB KDBX / 16 KiB
 control, aligned with KeySafe). Those XC-only changes are not dual-client proof.
