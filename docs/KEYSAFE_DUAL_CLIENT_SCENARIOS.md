@@ -19,6 +19,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   (`KdbxLiveRealCiphertextIntegrationTest`; still no KeePassXC)
 - External lease revocation blocks a stale Android publish of real AES-KDF
   ciphertext; the new owner’s revision reloads (Android↔Go only)
+- Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one
+  winner, one stale (412); committed ciphertext reloads (Android↔Go only)
 
 ## Still required before clearing the dual-client gate blocker
 
@@ -33,7 +35,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 | Offline edit on Android only, then reconnect | partial (cache/recovery unit tests; not XC) |
 | Offline edit on desktop only, then reconnect | open |
 | Two independent offline edits, reconnect in either order | open |
-| Simultaneous publish attempts with real KDBX | open |
+| Simultaneous publish attempts with real KDBX | partial (Android↔Go same-base race: one win / one 412; XC still open) |
 | Crash during save + recovery reopen on the same client | partial (Android recovery unit tests) |
 | Re-open every produced KDBX in **both** KeePassXC and KeySafe | open |
 | Assembled ciphertext round-trip under AES-KDF (JVM) | proven (`KdbxAssembledCiphertextWriterTest`; does not authorize publish) |

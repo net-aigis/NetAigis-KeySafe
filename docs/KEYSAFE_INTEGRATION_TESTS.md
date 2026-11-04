@@ -20,9 +20,10 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    live Go coordinator, survives reject-before-forward and lost-ack upload
    fault proxies, truncated and reject-before-forward download fault proxies,
    and reloads under strict unknown-extension refusal. Busy-lease detection is
-   covered for a second Android client, and external lease revocation blocks a
-   stale real AES-KDF publish while the new owner’s ciphertext reloads. Still
-   Android↔Go only; KeePassXC dual-client proofs remain open.
+   covered for a second Android client, external lease revocation blocks a stale
+   real AES-KDF publish while the new owner’s ciphertext reloads, and two
+   concurrent same-base real AES-KDF PUTs yield exactly one winner (412 for the
+   loser). Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
    They run under Go's race detector.

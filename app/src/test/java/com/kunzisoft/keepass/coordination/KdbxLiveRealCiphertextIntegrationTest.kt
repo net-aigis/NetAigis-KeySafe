@@ -6,6 +6,9 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URI
 import java.util.UUID
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -166,6 +169,91 @@ class KdbxLiveRealCiphertextIntegrationTest {
             client(url, database, "waiter").use { waiter ->
                 mustThrow<KdbxCoordinatorClient.BusyException> { waiter.acquire() }
             }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
+    fun `simultaneous real AES-KDF publishes on the same base leave exactly one winner`() {
+        val url = requireLiveUrl()
+        val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("race-a-bin"),
+            localPassword = "race-a-secret"
+        )
+        val second = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("race-b-bin"),
+            localPassword = "race-b-secret"
+        )
+        val database = databaseId("race")
+        val primary = client(url, database, "primary")
+        val racer = client(url, database, "racer")
+        try {
+            primary.acquire()
+            // Test-only: share one lease/revision so both PUTs race the same If-Match base,
+            // matching the Go concurrent-publish check. Production clients never clone leases.
+            val leaseField = KdbxCoordinatorClient::class.java.getDeclaredField("lease")
+            val revisionField = KdbxCoordinatorClient::class.java.getDeclaredField("revision")
+            leaseField.isAccessible = true
+            revisionField.isAccessible = true
+            leaseField.set(racer, leaseField.get(primary))
+            revisionField.set(racer, revisionField.get(primary))
+
+            val ready = CountDownLatch(2)
+            val start = CountDownLatch(1)
+            val ok = AtomicInteger(0)
+            val stale = AtomicInteger(0)
+            val errors = java.util.concurrent.ConcurrentLinkedQueue<Throwable>()
+            val pool = Executors.newFixedThreadPool(2)
+            try {
+                val tasks = listOf(primary to first.ciphertext, racer to second.ciphertext).map { (writer, body) ->
+                    pool.submit {
+                        ready.countDown()
+                        check(start.await(10, TimeUnit.SECONDS))
+                        try {
+                            writer.publish(body)
+                            ok.incrementAndGet()
+                        } catch (_: KdbxCoordinatorClient.StaleRevisionException) {
+                            stale.incrementAndGet()
+                        } catch (e: Throwable) {
+                            errors.add(e)
+                        }
+                    }
+                }
+                check(ready.await(10, TimeUnit.SECONDS))
+                start.countDown()
+                tasks.forEach { it.get(40, TimeUnit.SECONDS) }
+            } finally {
+                pool.shutdownNow()
+            }
+            check(errors.isEmpty()) {
+                "Unexpected publish failures: ${errors.joinToString { it.javaClass.simpleName + ": " + it.message }}"
+            }
+            check(ok.get() == 1 && stale.get() == 1) {
+                "Exactly one concurrent real-KDBX publish must win: ok=${ok.get()} stale=${stale.get()}"
+            }
+            client(url, database, "observer").use { observer ->
+                val downloaded = observer.downloadReadOnly()
+                check(
+                    downloaded != null &&
+                        (downloaded.contentEquals(first.ciphertext) ||
+                            downloaded.contentEquals(second.ciphertext))
+                )
+                val expected = if (downloaded.contentEquals(first.ciphertext)) first else second
+                val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                    encryptedKdbx = downloaded,
+                    masterCredential = MasterCredential(
+                        KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                    ),
+                    binaryCacheDirectory = tempFolder.newFolder("race-reload")
+                )
+                assertTrue(
+                    reloaded.database.getEntryById(expected.entryId)!!.password
+                        .contentEquals(expected.entryPassword.toCharArray())
+                )
+            }
+        } finally {
+            runCatching { primary.close() }
+            runCatching { racer.close() }
         }
         assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
     }
