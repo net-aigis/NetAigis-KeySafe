@@ -80,13 +80,13 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 ## XC checkout for interop
 
 Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
-feature tip `cd31d0ae` on `feature/coordinated-kdbx-20261014`: HTTP/file body
+feature tip `9774e87f` on `feature/coordinated-kdbx-20261014`: HTTP/file body
 bounds, TLS 1.2+/fail-closed SSL, settings-UI validation, shared client config checks, unit-tested lease-response parsing, publish-ack matching,
 download hash/ETag binding, shared JSON field extraction, busy-lock 423 detection,
 lost-lease 409 / stale-revision 412 helpers, empty/oversized KDBX payload checks,
-successful renew HTTP 200 helper, and CoordinatorByteLimits (64 MiB KDBX / 16 KiB
-control, aligned with KeySafe). GitHub Actions on `net-aigis/keepassxc` still
-rejects new runs (`Actions has been disabled`) despite repo permissions
-`enabled:true`; last successful XC Actions run remains `f8217b74` (2026-11-04).
-New helpers were checked locally via QtTest in Ubuntu 24.04/podman. Those
-XC-only changes are not dual-client proof.
+successful renew HTTP 200 helper, acceptable release 204/409 helper, and
+CoordinatorByteLimits (64 MiB KDBX / 16 KiB control, aligned with KeySafe).
+GitHub Actions on `net-aigis/keepassxc` still rejects new runs (`Actions has been
+disabled`) despite repo permissions `enabled:true`; last successful XC Actions
+run remains `f8217b74` (2026-11-04). New helpers were checked locally via QtTest
+in Ubuntu 24.04/podman. Those XC-only changes are not dual-client proof.
