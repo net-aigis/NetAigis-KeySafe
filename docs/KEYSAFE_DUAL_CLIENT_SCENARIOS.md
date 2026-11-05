@@ -12,6 +12,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 - PUT committed but HTTP acknowledgement lost
 - PUT interrupted before the coordinator sees the body
 - Assembled AES-KDF KDBX publish + strict reload through the live Go coordinator
+- Same-owner successive real AES-KDF publishes advance the tip without releasing
+  the lease (Android↔Go only)
 - Interrupted / lost-ack real AES-KDF upload fault cases (Android↔Go only)
 - Truncated and reject-before-forward real AES-KDF download fault cases
   (Android↔Go only; retry/direct reader still reloads ciphertext)

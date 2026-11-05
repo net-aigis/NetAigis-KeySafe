@@ -88,6 +88,46 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `same owner successive real AES-KDF publishes advance tip without releasing lease`() {
+        val url = requireLiveUrl()
+        val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("succ-a-bin"),
+            localPassword = "succ-a-secret"
+        )
+        val second = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("succ-b-bin"),
+            localPassword = "succ-b-secret"
+        )
+        val database = databaseId("succ")
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            val rev1 = writer.publish(first.ciphertext)
+            check(rev1.length == 64)
+            check(writer.download()!!.contentEquals(first.ciphertext))
+            val rev2 = writer.publish(second.ciphertext)
+            check(rev2.length == 64 && rev2 != rev1)
+            check(writer.download()!!.contentEquals(second.ciphertext))
+        }
+        client(url, database, "observer").use { observer ->
+            val tip = observer.downloadReadOnly()
+            check(tip != null && tip.contentEquals(second.ciphertext))
+            check(!tip.contentEquals(first.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = tip,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("succ-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(second.entryId)!!.password
+                    .contentEquals(second.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `interrupted real AES-KDF upload leaves server unchanged then retry succeeds`() {
         val url = requireLiveUrl()
         val rejected = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
