@@ -214,6 +214,40 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `observer still reads tip while exclusive holder keeps real AES-KDF lease`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("obs-busy-bin"),
+            localPassword = "obs-busy-secret"
+        )
+        val database = databaseId("obsbusy")
+        client(url, database, "holder").use { holder ->
+            holder.acquire()
+            holder.publish(fixture.ciphertext)
+            client(url, database, "waiter").use { waiter ->
+                mustThrow<KdbxCoordinatorClient.BusyException> { waiter.acquire() }
+            }
+            client(url, database, "observer").use { observer ->
+                val tip = observer.downloadReadOnly()
+                check(tip != null && tip.contentEquals(fixture.ciphertext))
+                val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                    encryptedKdbx = tip,
+                    masterCredential = MasterCredential(
+                        KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                    ),
+                    binaryCacheDirectory = tempFolder.newFolder("obs-busy-reload")
+                )
+                assertTrue(
+                    reloaded.database.getEntryById(fixture.entryId)!!.password
+                        .contentEquals(fixture.entryPassword.toCharArray())
+                )
+            }
+            check(holder.hasLease())
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `simultaneous real AES-KDF publishes on the same base leave exactly one winner`() {
         val url = requireLiveUrl()
         val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(

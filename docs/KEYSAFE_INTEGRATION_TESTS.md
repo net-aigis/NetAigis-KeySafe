@@ -29,7 +29,8 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    lying publish acknowledgement after commit fails closed for the writer, and
    exclusive real AES-KDF lease handoff plus A→B→A return of write ownership
    reload under strict load, a released lease token cannot overwrite after
-   handoff, and same-owner successive real AES-KDF publishes advance the tip.
+   handoff, same-owner successive real AES-KDF publishes advance the tip, and a
+   read-only observer reloads while the exclusive holder keeps the lease.
    Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
