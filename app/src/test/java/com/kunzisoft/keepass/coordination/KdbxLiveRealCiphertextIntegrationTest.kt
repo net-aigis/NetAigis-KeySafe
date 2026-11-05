@@ -58,6 +58,51 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `real AES-KDF tips stay isolated across database ids`() {
+        val url = requireLiveUrl()
+        val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("iso-a-bin"),
+            localPassword = "iso-a-secret"
+        )
+        val second = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("iso-b-bin"),
+            localPassword = "iso-b-secret"
+        )
+        val dbA = databaseId("isoa")
+        val dbB = databaseId("isob")
+        client(url, dbA, "alpha").use { a ->
+            a.acquire()
+            a.publish(first.ciphertext)
+        }
+        client(url, dbB, "beta").use { b ->
+            b.acquire()
+            b.publish(second.ciphertext)
+        }
+        client(url, dbA, "obs-a").use { observer ->
+            val tip = observer.downloadReadOnly()
+            check(tip != null && tip.contentEquals(first.ciphertext))
+            check(!tip.contentEquals(second.ciphertext))
+        }
+        client(url, dbB, "obs-b").use { observer ->
+            val tip = observer.downloadReadOnly()
+            check(tip != null && tip.contentEquals(second.ciphertext))
+            check(!tip.contentEquals(first.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = tip,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("iso-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(second.entryId)!!.password
+                    .contentEquals(second.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `publish without acquire fails closed on live coordinator`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
