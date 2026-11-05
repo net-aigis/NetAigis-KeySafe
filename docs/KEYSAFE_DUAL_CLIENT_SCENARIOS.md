@@ -25,6 +25,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   reloads server ciphertext (Android↔Go only)
 - Failed lease renew after a real AES-KDF publish marks the lease lost and
   blocks further writes; server ciphertext stays (Android↔Go only)
+- Substituted download body with an intact real AES-KDF ETag fails closed;
+  direct reader still reloads (Android↔Go only)
 
 ## Still required before clearing the dual-client gate blocker
 

@@ -24,7 +24,7 @@ internal class KdbxLiveFaultProxy(
     private val rejectRenew: () -> Boolean = { false }
 ) : AutoCloseable {
     enum class Mode { NORMAL, REJECT_BEFORE_FORWARD, ACK_LOST }
-    enum class GetMode { NORMAL, REJECT_BEFORE_FORWARD, TRUNCATE_HALF, WRONG_ETAG }
+    enum class GetMode { NORMAL, REJECT_BEFORE_FORWARD, TRUNCATE_HALF, WRONG_ETAG, WRONG_BODY }
 
     private val listener = ServerSocket(0, 16, InetAddress.getByName("127.0.0.1"))
     private val executor = Executors.newCachedThreadPool { task ->
@@ -170,10 +170,16 @@ internal class KdbxLiveFaultProxy(
                     "\"" + "a".repeat(64) + "\""
                 else -> connection.getHeaderField("ETag")
             }
+            val responseBody = when {
+                getMode == GetMode.WRONG_BODY && status == 200 && reply.isNotEmpty() ->
+                    // Keep the real ETag but substitute different ciphertext bytes.
+                    ByteArray(reply.size) { (it + 7).toByte() }
+                else -> reply
+            }
             respond(
                 socket,
                 status,
-                reply,
+                responseBody,
                 etag,
                 truncateHalf = getMode == GetMode.TRUNCATE_HALF && status == 200
             )
