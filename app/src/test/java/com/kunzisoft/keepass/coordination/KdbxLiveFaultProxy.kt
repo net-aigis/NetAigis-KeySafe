@@ -23,7 +23,7 @@ internal class KdbxLiveFaultProxy(
     private val interceptGetFile: () -> GetMode = { GetMode.NORMAL },
     private val rejectRenew: () -> Boolean = { false }
 ) : AutoCloseable {
-    enum class Mode { NORMAL, REJECT_BEFORE_FORWARD, ACK_LOST }
+    enum class Mode { NORMAL, REJECT_BEFORE_FORWARD, ACK_LOST, ACK_WRONG_REVISION }
     enum class GetMode { NORMAL, REJECT_BEFORE_FORWARD, TRUNCATE_HALF, WRONG_ETAG, WRONG_BODY }
 
     private val listener = ServerSocket(0, 16, InetAddress.getByName("127.0.0.1"))
@@ -162,6 +162,18 @@ internal class KdbxLiveFaultProxy(
                 ?.use { it.readBytes() } ?: byteArrayOf()
             if (putMode == Mode.ACK_LOST) {
                 check(status == 200) { "Backend did not commit before simulated lost acknowledgement" }
+                return
+            }
+            if (putMode == Mode.ACK_WRONG_REVISION) {
+                check(status == 200) { "Backend did not commit before simulated wrong acknowledgement" }
+                // Body committed; JSON revision and ETag lie about the hash.
+                val lie = "b".repeat(64)
+                respond(
+                    socket,
+                    200,
+                    """{"revision":"$lie"}""".toByteArray(StandardCharsets.US_ASCII),
+                    "\"$lie\""
+                )
                 return
             }
             val etag = when {

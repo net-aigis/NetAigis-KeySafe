@@ -27,6 +27,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   blocks further writes; server ciphertext stays (Android↔Go only)
 - Substituted download body with an intact real AES-KDF ETag fails closed;
   direct reader still reloads (Android↔Go only)
+- Wrong publish acknowledgement (lying revision/ETag) after a committed real
+  AES-KDF PUT fails closed for the writer; observer still reloads (Android↔Go)
 
 ## Still required before clearing the dual-client gate blocker
 

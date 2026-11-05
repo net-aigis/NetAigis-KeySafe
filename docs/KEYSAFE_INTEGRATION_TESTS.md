@@ -25,7 +25,8 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    concurrent same-base real AES-KDF PUTs yield exactly one winner (412 for the
    loser), a mismatched download ETag fails closed while a direct reader still
    reloads, a failed lease renew after real AES-KDF publish blocks further
-   writes, and a substituted download body with an intact ETag fails closed.
+   writes, a substituted download body with an intact ETag fails closed, and a
+   lying publish acknowledgement after commit fails closed for the writer.
    Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.

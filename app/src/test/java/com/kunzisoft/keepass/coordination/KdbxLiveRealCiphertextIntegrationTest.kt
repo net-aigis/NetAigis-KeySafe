@@ -466,6 +466,42 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `wrong publish acknowledgement after real AES-KDF commit fails closed for writer`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("ackmis-bin"),
+            localPassword = "ack-mis-secret"
+        )
+        val database = databaseId("ackmis")
+        KdbxLiveFaultProxy(
+            backend = url,
+            interceptPut = { _, _ -> KdbxLiveFaultProxy.Mode.ACK_WRONG_REVISION }
+        ).use { proxy ->
+            client(proxy.url, database, "writer").use { writer ->
+                writer.acquire()
+                mustThrow<IOException> { writer.publish(fixture.ciphertext) }
+                assertFalse(writer.hasLease())
+            }
+        }
+        client(url, database, "observer").use { observer ->
+            val downloaded = observer.downloadReadOnly()
+            check(downloaded != null && downloaded.contentEquals(fixture.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = downloaded,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("ackmis-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(fixture.entryId)!!.password
+                    .contentEquals(fixture.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `substituted body with real AES-KDF ETag fails closed then direct reader reloads`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
