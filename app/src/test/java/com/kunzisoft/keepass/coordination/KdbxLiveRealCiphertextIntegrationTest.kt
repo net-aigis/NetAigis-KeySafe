@@ -58,6 +58,38 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `coordinator client rejects traversal database id short token and cleartext remote`() {
+        mustThrow<IllegalArgumentException> {
+            KdbxCoordinatorClient(
+                "http://127.0.0.1:9/",
+                "../evil",
+                token,
+                "owner",
+                allowInsecureLoopbackForTests = true
+            )
+        }
+        mustThrow<IllegalArgumentException> {
+            KdbxCoordinatorClient(
+                "http://127.0.0.1:9/",
+                "ok-db",
+                "too-short-token",
+                "owner",
+                allowInsecureLoopbackForTests = true
+            )
+        }
+        mustThrow<IllegalArgumentException> {
+            KdbxCoordinatorClient(
+                "http://example.org/",
+                "ok-db",
+                token,
+                "owner",
+                allowInsecureLoopbackForTests = true
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `assembled AES-KDF ciphertext publishes and reloads through the live Go coordinator`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(

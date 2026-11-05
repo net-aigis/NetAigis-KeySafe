@@ -33,7 +33,8 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    read-only observer reloads while the exclusive holder keeps the lease, and a
    wrong bearer token cannot acquire or read the tip, empty or oversized
    ciphertext publishes are refused before contacting the coordinator, and
-   concurrent observers reload the same real AES-KDF tip.
+   concurrent observers reload the same real AES-KDF tip, and the client
+   rejects traversal database ids, short tokens, and cleartext non-loopback URLs.
    Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.

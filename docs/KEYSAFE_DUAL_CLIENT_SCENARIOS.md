@@ -29,6 +29,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   coordinator (Android↔Go only)
 - Concurrent read-only observers reload the same real AES-KDF tip
   (Android↔Go only)
+- Coordinator client rejects traversal database ids, short tokens, and
+  cleartext non-loopback URLs before contacting the network
 - External lease revocation blocks a stale Android publish of real AES-KDF
   ciphertext; the new owner’s revision reloads (Android↔Go only)
 - Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one
