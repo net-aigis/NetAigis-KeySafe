@@ -58,6 +58,41 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `empty tip download returns null then first real AES-KDF publish creates tip`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("emptytip-bin"),
+            localPassword = "emptytip-secret"
+        )
+        val database = databaseId("emptytip")
+        client(url, database, "observer").use { observer ->
+            check(observer.downloadReadOnly() == null) {
+                "Fresh database id must have no tip"
+            }
+        }
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            writer.publish(fixture.ciphertext)
+        }
+        client(url, database, "observer").use { observer ->
+            val tip = observer.downloadReadOnly()
+            check(tip != null && tip.contentEquals(fixture.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = tip,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("emptytip-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(fixture.entryId)!!.password
+                    .contentEquals(fixture.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `close releases real AES-KDF lease so the next owner can acquire immediately`() {
         val url = requireLiveUrl()
         val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
