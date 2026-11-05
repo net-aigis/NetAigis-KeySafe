@@ -40,6 +40,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   (Android↔Go only)
 - Empty tip download returns null; first real AES-KDF publish creates the tip
   (Android↔Go only)
+- Double acquire on the same client fails closed while the lease stays held
+  (Android↔Go only)
 - External lease revocation blocks a stale Android publish of real AES-KDF
   ciphertext; the new owner’s revision reloads (Android↔Go only)
 - Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one

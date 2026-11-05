@@ -58,6 +58,21 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `double acquire on same real AES-KDF client fails closed`() {
+        val url = requireLiveUrl()
+        val database = databaseId("dblacq")
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            mustThrow<IllegalStateException> { writer.acquire() }
+            check(writer.hasLease())
+            client(url, database, "waiter").use { waiter ->
+                mustThrow<KdbxCoordinatorClient.BusyException> { waiter.acquire() }
+            }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `empty tip download returns null then first real AES-KDF publish creates tip`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
