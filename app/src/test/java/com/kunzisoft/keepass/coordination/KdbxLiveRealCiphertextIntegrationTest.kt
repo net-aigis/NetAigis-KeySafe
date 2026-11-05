@@ -599,6 +599,71 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `released real AES-KDF lease token cannot overwrite after handoff`() {
+        val url = requireLiveUrl()
+        val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("zombie-a-bin"),
+            localPassword = "zombie-a-secret"
+        )
+        val second = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("zombie-b-bin"),
+            localPassword = "zombie-b-secret"
+        )
+        val stale = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("zombie-stale-bin"),
+            localPassword = "zombie-stale-secret"
+        )
+        val database = databaseId("zombie")
+        val leaseField = KdbxCoordinatorClient::class.java.getDeclaredField("lease")
+        val revisionField = KdbxCoordinatorClient::class.java.getDeclaredField("revision")
+        val lostField = KdbxCoordinatorClient::class.java.getDeclaredField("lost")
+        leaseField.isAccessible = true
+        revisionField.isAccessible = true
+        lostField.isAccessible = true
+
+        lateinit var capturedLease: String
+        lateinit var capturedRevision: String
+        client(url, database, "alpha").use { alpha ->
+            alpha.acquire()
+            alpha.publish(first.ciphertext)
+            capturedLease = leaseField.get(alpha) as String
+            capturedRevision = revisionField.get(alpha) as String
+        }
+        client(url, database, "beta").use { beta ->
+            beta.acquire()
+            beta.publish(second.ciphertext)
+        }
+        client(url, database, "zombie").use { zombie ->
+            // Test-only: reinject the released owner's lease/revision after handoff.
+            leaseField.set(zombie, capturedLease)
+            revisionField.set(zombie, capturedRevision)
+            (lostField.get(zombie) as java.util.concurrent.atomic.AtomicBoolean).set(false)
+            mustThrow<KdbxCoordinatorClient.LostLeaseException> {
+                zombie.publish(stale.ciphertext)
+            }
+        }
+        client(url, database, "observer").use { observer ->
+            val tip = observer.downloadReadOnly()
+            check(tip != null && tip.contentEquals(second.ciphertext)) {
+                "Zombie lease must not overwrite the handoff tip"
+            }
+            check(!tip.contentEquals(stale.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = tip,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("zombie-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(second.entryId)!!.password
+                    .contentEquals(second.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `substituted body with real AES-KDF ETag fails closed then direct reader reloads`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(

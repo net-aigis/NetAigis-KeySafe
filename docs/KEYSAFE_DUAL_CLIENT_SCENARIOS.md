@@ -29,6 +29,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   direct reader still reloads (Android↔Go only)
 - Clean real AES-KDF lease handoff: second owner publishes and tip reloads (Android↔Go only)
 - Real AES-KDF exclusive write returns after A→B→A handoff; tip reloads (Android↔Go only)
+- Released real AES-KDF lease token cannot overwrite after handoff (Android↔Go only)
 - Wrong publish acknowledgement (lying revision/ETag) after a committed real
   AES-KDF PUT fails closed for the writer; observer still reloads (Android↔Go)
 
@@ -57,4 +58,8 @@ Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
 feature tip `a2df4d80` on `feature/coordinated-kdbx-20261014`: HTTP/file body
 bounds, TLS 1.2+/fail-closed SSL, settings-UI validation, shared client config checks, unit-tested lease-response parsing, publish-ack matching,
 download hash/ETag binding, shared JSON field extraction, busy-lock 423 detection, and CoordinatorByteLimits (64 MiB KDBX / 16 KiB
-control, aligned with KeySafe). Those XC-only changes are not dual-client proof.
+control, aligned with KeySafe). Pending security branch
+`security/kdbx-lost-stale-status-ef00853f` (`e0fe3632`) adds shared 409/412
+helpers but is not FF’d: GitHub Actions on `net-aigis/keepassxc` currently
+rejects new runs (`Actions has been disabled`) despite repo permissions
+`enabled:true`. Those XC-only changes are not dual-client proof.
