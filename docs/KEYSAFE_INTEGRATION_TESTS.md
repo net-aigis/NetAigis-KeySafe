@@ -31,7 +31,8 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    reload under strict load, a released lease token cannot overwrite after
    handoff, same-owner successive real AES-KDF publishes advance the tip, and a
    read-only observer reloads while the exclusive holder keeps the lease, and a
-   wrong bearer token cannot acquire or read the tip.
+   wrong bearer token cannot acquire or read the tip, and an empty ciphertext
+   publish is refused before contacting the coordinator.
    Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.

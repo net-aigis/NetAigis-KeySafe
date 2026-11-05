@@ -214,6 +214,31 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `empty ciphertext publish is refused before contacting live coordinator`() {
+        val url = requireLiveUrl()
+        val database = databaseId("empty")
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            mustThrow<IllegalArgumentException> { writer.publish(ByteArray(0)) }
+            client(url, database, "observer").use { observer ->
+                check(observer.downloadReadOnly() == null) {
+                    "Empty publish must not create a server tip"
+                }
+            }
+            val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+                tempFolder.newFolder("empty-ok-bin"),
+                localPassword = "empty-ok-secret"
+            )
+            writer.publish(fixture.ciphertext)
+            client(url, database, "observer").use { observer ->
+                val tip = observer.downloadReadOnly()
+                check(tip != null && tip.contentEquals(fixture.ciphertext))
+            }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `wrong bearer token cannot acquire or read real AES-KDF database id`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
