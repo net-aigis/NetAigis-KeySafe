@@ -36,7 +36,8 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    concurrent observers reload the same real AES-KDF tip, and the client
    rejects traversal database ids, short tokens, and cleartext non-loopback URLs,
    publish without an acquired lease fails closed, distinct database ids keep
-   isolated real AES-KDF tips, and a lease on one id does not busy another.
+   isolated real AES-KDF tips, a lease on one id does not busy another, and
+   close() releases the lease for the next owner.
    Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.

@@ -58,6 +58,33 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `close releases real AES-KDF lease so the next owner can acquire immediately`() {
+        val url = requireLiveUrl()
+        val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("closerel-a-bin"),
+            localPassword = "closerel-a-secret"
+        )
+        val second = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("closerel-b-bin"),
+            localPassword = "closerel-b-secret"
+        )
+        val database = databaseId("closerel")
+        client(url, database, "alpha").use { alpha ->
+            alpha.acquire()
+            alpha.publish(first.ciphertext)
+            check(alpha.hasLease())
+        }
+        client(url, database, "beta").use { beta ->
+            beta.acquire()
+            check(beta.hasLease())
+            beta.publish(second.ciphertext)
+            val tip = beta.download()
+            check(tip != null && tip.contentEquals(second.ciphertext))
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `exclusive lease on one database id does not busy another`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
