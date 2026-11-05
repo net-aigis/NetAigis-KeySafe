@@ -58,6 +58,31 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `exclusive lease on one database id does not busy another`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("leaseiso-bin"),
+            localPassword = "leaseiso-secret"
+        )
+        val dbA = databaseId("leaseisoa")
+        val dbB = databaseId("leaseisob")
+        client(url, dbA, "holder").use { holder ->
+            holder.acquire()
+            holder.publish(fixture.ciphertext)
+            client(url, dbA, "waiter").use { waiter ->
+                mustThrow<KdbxCoordinatorClient.BusyException> { waiter.acquire() }
+            }
+            client(url, dbB, "other").use { other ->
+                other.acquire()
+                check(other.hasLease())
+                other.publish(fixture.ciphertext)
+                check(other.download()!!.contentEquals(fixture.ciphertext))
+            }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `real AES-KDF tips stay isolated across database ids`() {
         val url = requireLiveUrl()
         val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
