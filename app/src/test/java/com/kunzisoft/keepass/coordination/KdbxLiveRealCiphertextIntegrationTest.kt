@@ -58,6 +58,18 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `hasLease is false before acquire and true after real AES-KDF lock`() {
+        val url = requireLiveUrl()
+        val database = databaseId("haslease")
+        client(url, database, "writer").use { writer ->
+            check(!writer.hasLease())
+            writer.acquire()
+            check(writer.hasLease())
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `double acquire on same real AES-KDF client fails closed`() {
         val url = requireLiveUrl()
         val database = databaseId("dblacq")
