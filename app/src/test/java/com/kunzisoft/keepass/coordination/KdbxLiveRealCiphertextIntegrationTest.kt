@@ -547,6 +547,58 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `real AES-KDF exclusive write returns after A to B to A handoff`() {
+        val url = requireLiveUrl()
+        val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("roundtrip-a1-bin"),
+            localPassword = "roundtrip-a1-secret"
+        )
+        val second = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("roundtrip-b-bin"),
+            localPassword = "roundtrip-b-secret"
+        )
+        val third = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("roundtrip-a2-bin"),
+            localPassword = "roundtrip-a2-secret"
+        )
+        val database = databaseId("handoff2")
+        client(url, database, "alpha").use { alpha ->
+            alpha.acquire()
+            alpha.publish(first.ciphertext)
+        }
+        client(url, database, "beta").use { beta ->
+            beta.acquire()
+            beta.publish(second.ciphertext)
+            check(beta.download()!!.contentEquals(second.ciphertext))
+        }
+        client(url, database, "alpha").use { alpha ->
+            alpha.acquire()
+            alpha.publish(third.ciphertext)
+            val downloaded = alpha.download()
+            check(downloaded != null && downloaded.contentEquals(third.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = downloaded,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("roundtrip-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(third.entryId)!!.password
+                    .contentEquals(third.entryPassword.toCharArray())
+            )
+        }
+        client(url, database, "observer").use { observer ->
+            val tip = observer.downloadReadOnly()
+            check(tip != null && tip.contentEquals(third.ciphertext)) {
+                "A→B→A handoff must leave alpha's second ciphertext as the tip"
+            }
+            check(!tip.contentEquals(first.ciphertext) && !tip.contentEquals(second.ciphertext))
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `substituted body with real AES-KDF ETag fails closed then direct reader reloads`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
