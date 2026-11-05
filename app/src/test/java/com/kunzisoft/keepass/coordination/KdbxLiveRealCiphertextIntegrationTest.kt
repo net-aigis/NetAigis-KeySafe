@@ -502,6 +502,51 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `real AES-KDF lease handoff lets second owner publish and first stays out`() {
+        val url = requireLiveUrl()
+        val first = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("handoff-a-bin"),
+            localPassword = "handoff-a-secret"
+        )
+        val second = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("handoff-b-bin"),
+            localPassword = "handoff-b-secret"
+        )
+        val database = databaseId("handoff")
+        client(url, database, "alpha").use { alpha ->
+            alpha.acquire()
+            alpha.publish(first.ciphertext)
+        }
+        client(url, database, "beta").use { beta ->
+            beta.acquire()
+            beta.publish(second.ciphertext)
+            val downloaded = beta.download()
+            check(downloaded != null && downloaded.contentEquals(second.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = downloaded,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("handoff-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(second.entryId)!!.password
+                    .contentEquals(second.entryPassword.toCharArray())
+            )
+        }
+        client(url, database, "observer").use { observer ->
+            val downloaded = observer.downloadReadOnly()
+            check(downloaded != null && downloaded.contentEquals(second.ciphertext)) {
+                "Handoff must leave the second owner's ciphertext as the tip"
+            }
+            check(!downloaded.contentEquals(first.ciphertext)) {
+                "Handoff must not leave the first owner's ciphertext as the tip"
+            }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `substituted body with real AES-KDF ETag fails closed then direct reader reloads`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
