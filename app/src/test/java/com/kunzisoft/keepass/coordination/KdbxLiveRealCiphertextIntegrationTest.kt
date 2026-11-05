@@ -258,6 +258,15 @@ class KdbxLiveRealCiphertextIntegrationTest {
                 allowInsecureLoopbackForTests = true
             )
         }
+        mustThrow<IllegalArgumentException> {
+            KdbxCoordinatorClient(
+                "http://127.0.0.1:9/",
+                "ok-db",
+                token,
+                "bad/owner",
+                allowInsecureLoopbackForTests = true
+            )
+        }
         assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
     }
 
