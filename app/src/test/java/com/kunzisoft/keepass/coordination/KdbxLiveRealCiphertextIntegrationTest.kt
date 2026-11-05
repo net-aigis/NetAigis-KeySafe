@@ -58,6 +58,31 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `publish without acquire fails closed on live coordinator`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("nolease-bin"),
+            localPassword = "nolease-secret"
+        )
+        val database = databaseId("nolease")
+        client(url, database, "writer").use { writer ->
+            mustThrow<IOException> { writer.publish(fixture.ciphertext) }
+            client(url, database, "observer").use { observer ->
+                check(observer.downloadReadOnly() == null) {
+                    "Publish without lease must not create a tip"
+                }
+            }
+            writer.acquire()
+            writer.publish(fixture.ciphertext)
+            client(url, database, "observer").use { observer ->
+                val tip = observer.downloadReadOnly()
+                check(tip != null && tip.contentEquals(fixture.ciphertext))
+            }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `coordinator client rejects traversal database id short token and cleartext remote`() {
         mustThrow<IllegalArgumentException> {
             KdbxCoordinatorClient(

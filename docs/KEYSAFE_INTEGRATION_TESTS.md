@@ -34,7 +34,8 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    wrong bearer token cannot acquire or read the tip, empty or oversized
    ciphertext publishes are refused before contacting the coordinator, and
    concurrent observers reload the same real AES-KDF tip, and the client
-   rejects traversal database ids, short tokens, and cleartext non-loopback URLs.
+   rejects traversal database ids, short tokens, and cleartext non-loopback URLs,
+   and publish without an acquired lease fails closed.
    Still Android↔Go only; KeePassXC dual-client proofs remain open.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
