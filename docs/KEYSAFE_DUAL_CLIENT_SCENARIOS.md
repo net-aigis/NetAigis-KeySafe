@@ -21,6 +21,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   (`KdbxLiveRealCiphertextIntegrationTest`; still no KeePassXC)
 - Read-only observer still reloads the tip while the exclusive holder keeps a
   real AES-KDF lease (Android↔Go only)
+- Wrong bearer token cannot acquire or read a real AES-KDF database id
+  (Android↔Go only)
 - External lease revocation blocks a stale Android publish of real AES-KDF
   ciphertext; the new owner’s revision reloads (Android↔Go only)
 - Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one

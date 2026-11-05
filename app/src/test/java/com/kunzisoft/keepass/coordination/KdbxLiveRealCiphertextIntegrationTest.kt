@@ -214,6 +214,36 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `wrong bearer token cannot acquire or read real AES-KDF database id`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("auth-bin"),
+            localPassword = "auth-secret"
+        )
+        val database = databaseId("auth")
+        val badToken = "integration-test-WRONG-secret-0123456789ab"
+        client(url, database, "owner").use { owner ->
+            owner.acquire()
+            owner.publish(fixture.ciphertext)
+        }
+        KdbxCoordinatorClient(
+            url,
+            database,
+            badToken,
+            "intruder",
+            allowInsecureLoopbackForTests = true
+        ).use { intruder ->
+            mustThrow<IOException> { intruder.acquire() }
+            mustThrow<IOException> { intruder.downloadReadOnly() }
+        }
+        client(url, database, "observer").use { observer ->
+            val tip = observer.downloadReadOnly()
+            check(tip != null && tip.contentEquals(fixture.ciphertext))
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `observer still reads tip while exclusive holder keeps real AES-KDF lease`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
