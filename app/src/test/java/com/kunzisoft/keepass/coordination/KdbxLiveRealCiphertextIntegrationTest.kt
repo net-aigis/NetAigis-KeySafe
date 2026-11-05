@@ -214,6 +214,32 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `oversized ciphertext publish is refused before contacting live coordinator`() {
+        val url = requireLiveUrl()
+        val database = databaseId("oversize")
+        val oversized = ByteArray(CoordinatorByteLimits.MAX_KDBX_BYTES + 1)
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            mustThrow<IOException> { writer.publish(oversized) }
+            client(url, database, "observer").use { observer ->
+                check(observer.downloadReadOnly() == null) {
+                    "Oversized publish must not create a server tip"
+                }
+            }
+            val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+                tempFolder.newFolder("oversize-ok-bin"),
+                localPassword = "oversize-ok-secret"
+            )
+            writer.publish(fixture.ciphertext)
+            client(url, database, "observer").use { observer ->
+                val tip = observer.downloadReadOnly()
+                check(tip != null && tip.contentEquals(fixture.ciphertext))
+            }
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `empty ciphertext publish is refused before contacting live coordinator`() {
         val url = requireLiveUrl()
         val database = databaseId("empty")
