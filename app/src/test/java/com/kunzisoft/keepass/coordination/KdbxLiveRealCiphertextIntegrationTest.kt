@@ -214,6 +214,63 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `concurrent observers reload the same real AES-KDF tip`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("multi-obs-bin"),
+            localPassword = "multi-obs-secret"
+        )
+        val database = databaseId("multiobs")
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            writer.publish(fixture.ciphertext)
+        }
+        val ready = CountDownLatch(4)
+        val start = CountDownLatch(1)
+        val ok = AtomicInteger(0)
+        val errors = java.util.concurrent.ConcurrentLinkedQueue<Throwable>()
+        val pool = Executors.newFixedThreadPool(4)
+        try {
+            val tasks = (0 until 4).map { idx ->
+                pool.submit {
+                    ready.countDown()
+                    check(start.await(10, TimeUnit.SECONDS))
+                    try {
+                        client(url, database, "obs$idx").use { observer ->
+                            val tip = observer.downloadReadOnly()
+                            check(tip != null && tip.contentEquals(fixture.ciphertext))
+                            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                                encryptedKdbx = tip,
+                                masterCredential = MasterCredential(
+                                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                                ),
+                                binaryCacheDirectory = tempFolder.newFolder("multi-obs-reload-$idx")
+                            )
+                            check(
+                                reloaded.database.getEntryById(fixture.entryId)!!.password
+                                    .contentEquals(fixture.entryPassword.toCharArray())
+                            )
+                            ok.incrementAndGet()
+                        }
+                    } catch (e: Throwable) {
+                        errors.add(e)
+                    }
+                }
+            }
+            check(ready.await(10, TimeUnit.SECONDS))
+            start.countDown()
+            tasks.forEach { it.get(60, TimeUnit.SECONDS) }
+        } finally {
+            pool.shutdownNow()
+        }
+        check(errors.isEmpty()) {
+            "Observer failures: ${errors.joinToString { it.javaClass.simpleName + ": " + it.message }}"
+        }
+        check(ok.get() == 4) { "Expected 4 concurrent observers, got ${ok.get()}" }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `oversized ciphertext publish is refused before contacting live coordinator`() {
         val url = requireLiveUrl()
         val database = databaseId("oversize")

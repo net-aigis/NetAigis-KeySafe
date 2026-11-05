@@ -27,6 +27,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   (Android↔Go only)
 - Oversized ciphertext publish (>64 MiB) is refused before contacting the live
   coordinator (Android↔Go only)
+- Concurrent read-only observers reload the same real AES-KDF tip
+  (Android↔Go only)
 - External lease revocation blocks a stale Android publish of real AES-KDF
   ciphertext; the new owner’s revision reloads (Android↔Go only)
 - Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one
@@ -69,7 +71,8 @@ feature tip `a2df4d80` on `feature/coordinated-kdbx-20261014`: HTTP/file body
 bounds, TLS 1.2+/fail-closed SSL, settings-UI validation, shared client config checks, unit-tested lease-response parsing, publish-ack matching,
 download hash/ETag binding, shared JSON field extraction, busy-lock 423 detection, and CoordinatorByteLimits (64 MiB KDBX / 16 KiB
 control, aligned with KeySafe). Pending security branch
-`security/kdbx-lost-stale-status-ef00853f` (`e0fe3632`) adds shared 409/412
-helpers but is not FF’d: GitHub Actions on `net-aigis/keepassxc` currently
-rejects new runs (`Actions has been disabled`) despite repo permissions
-`enabled:true`. Those XC-only changes are not dual-client proof.
+`security/kdbx-lost-stale-status-ef00853f` (`594e4637`, content tip `e0fe3632`)
+adds shared 409/412 helpers but is not FF’d: GitHub Actions on
+`net-aigis/keepassxc` currently rejects new runs (`Actions has been disabled`)
+despite repo permissions `enabled:true`; last successful XC CI remains
+`f8217b74` (2026-11-04). Those XC-only changes are not dual-client proof.
