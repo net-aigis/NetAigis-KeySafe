@@ -48,6 +48,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   (Android↔Go only)
 - currentRevision advances from empty ("0") to the real AES-KDF tip hash
   (Android↔Go only)
+- Concurrent acquire on an empty real AES-KDF database id: one winner, one busy
+  (Android↔Go only)
 - External lease revocation blocks a stale Android publish of real AES-KDF
   ciphertext; the new owner’s revision reloads (Android↔Go only)
 - Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one

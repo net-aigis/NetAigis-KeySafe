@@ -70,6 +70,52 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `concurrent acquire on empty real AES-KDF database yields one winner`() {
+        val url = requireLiveUrl()
+        val database = databaseId("raceacq")
+        val ready = CountDownLatch(2)
+        val start = CountDownLatch(1)
+        val wins = AtomicInteger(0)
+        val busy = AtomicInteger(0)
+        val errors = java.util.concurrent.ConcurrentLinkedQueue<Throwable>()
+        val pool = Executors.newFixedThreadPool(2)
+        try {
+            val tasks = listOf("alpha", "beta").map { owner ->
+                pool.submit {
+                    ready.countDown()
+                    check(start.await(10, TimeUnit.SECONDS))
+                    try {
+                        client(url, database, owner).use { editor ->
+                            try {
+                                editor.acquire()
+                                wins.incrementAndGet()
+                                check(editor.hasLease())
+                                Thread.sleep(200)
+                            } catch (_: KdbxCoordinatorClient.BusyException) {
+                                busy.incrementAndGet()
+                            }
+                        }
+                    } catch (e: Throwable) {
+                        errors.add(e)
+                    }
+                }
+            }
+            check(ready.await(10, TimeUnit.SECONDS))
+            start.countDown()
+            tasks.forEach { it.get(30, TimeUnit.SECONDS) }
+        } finally {
+            pool.shutdownNow()
+        }
+        check(errors.isEmpty()) {
+            "Acquire race errors: ${errors.joinToString { it.javaClass.simpleName + ": " + it.message }}"
+        }
+        check(wins.get() == 1 && busy.get() == 1) {
+            "Exactly one concurrent acquire must win: wins=${wins.get()} busy=${busy.get()}"
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `currentRevision advances from empty to real AES-KDF tip hash`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
