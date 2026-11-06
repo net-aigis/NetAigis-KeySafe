@@ -4,6 +4,16 @@ Automatic merge/publish stays denied until these scenarios are evidenced.
 Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 **not** dual-client proof with KeePassXC, even when real AES-KDF ciphertext is used.
 
+## Phase status (2026-11-06)
+
+| Slice | Status |
+| --- | --- |
+| Android↔Go live protocol with real AES-KDF ciphertext + fault matrix | **closed** for this phase (CI on KeySafe `main`) |
+| KeePassXC client hardening unit tests (config/lease/ack/limits/status) | **closed** locally (QtTest/podman); GitHub Actions on the XC fork remains disabled |
+| KeePassXC ↔ KeySafe dual-client against the real coordinator | **open** (needs working XC Actions or a local XC GUI build + shared coordinator) |
+| Native Argon2 assemble→write→reload on device/emulator | **open** (harness compiles in CI; no device attached) |
+| Auto-publish / merge authorization | **denied** (unchanged) |
+
 ## Proven today (Android ↔ Go)
 
 - Exclusive lease, read-only observer, successive writes, lock handoff (dummy bytes)
@@ -65,6 +75,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 - Released real AES-KDF lease token cannot overwrite after handoff (Android↔Go only)
 - Wrong publish acknowledgement (lying revision/ETag) after a committed real
   AES-KDF PUT fails closed for the writer; observer still reloads (Android↔Go)
+- After failed renew, `revisionForRecovery` still exposes the last tip while
+  `currentRevision` / publish stay lost (Android↔Go only)
 
 ## Still required before clearing the dual-client gate blocker
 
@@ -88,14 +100,14 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 ## XC checkout for interop
 
 Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
-feature tip `36b88950` on `feature/coordinated-kdbx-20261014`: HTTP/file body
-bounds, TLS 1.2+/fail-closed SSL, settings-UI validation, shared client config checks, unit-tested lease-response parsing, publish-ack matching,
-download hash/ETag binding, shared JSON field extraction, busy-lock 423 detection,
-lost-lease 409 / stale-revision 412 helpers, empty/oversized KDBX payload checks,
-successful renew HTTP 200 helper, acceptable release 204/409 helper, acquire and
-download success helpers, empty-tip 404/revision-0 check, and CoordinatorByteLimits
+feature tip (see tip SHA in the latest KeySafe docs commit) on
+`feature/coordinated-kdbx-20261014`: HTTP/file body bounds, TLS 1.2+/fail-closed
+SSL, settings-UI validation, shared client config checks, unit-tested lease-response
+parsing, publish-ack matching, download hash/ETag binding, shared JSON field
+extraction, busy/lost/stale/renew/release/acquire/download/publish/empty-tip HTTP
+status helpers, empty/oversized KDBX payload checks, and CoordinatorByteLimits
 (64 MiB KDBX / 16 KiB control, aligned with KeySafe). GitHub Actions on
 `net-aigis/keepassxc` still rejects new runs (`Actions has been disabled`) despite
 repo permissions `enabled:true`; last successful XC Actions run remains `f8217b74`
-(2026-11-04). New helpers were checked locally via QtTest in Ubuntu 24.04/podman.
+(2026-11-04). Helpers are checked locally via QtTest in Ubuntu 24.04/podman.
 Those XC-only changes are not dual-client proof.

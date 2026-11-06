@@ -977,6 +977,13 @@ class KdbxLiveRealCiphertextIntegrationTest {
                     }
                 }
                 assertFalse(editor.hasLease())
+                val recoveryRevision = editor.revisionForRecovery()
+                check(recoveryRevision.length == 64) {
+                    "Lost lease must still expose the last revision for crash recovery"
+                }
+                mustThrow<KdbxCoordinatorClient.LostLeaseException> {
+                    editor.currentRevision()
+                }
                 mustThrow<KdbxCoordinatorClient.LostLeaseException> {
                     editor.publish(blocked.ciphertext)
                 }

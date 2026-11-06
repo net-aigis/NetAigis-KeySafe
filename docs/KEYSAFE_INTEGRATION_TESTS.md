@@ -41,9 +41,12 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    null until the first real AES-KDF publish, double acquire on one client fails
    closed, leased download without acquire fails while read-only still works, and
    a writer download after publish reloads under the same lease, and
-   currentRevision advances from empty to the tip hash, and concurrent acquire
-   yields exactly one winner.
-   Still Android↔Go only; KeePassXC dual-client proofs remain open.
+   currentRevision advances from empty to the tip hash, concurrent acquire
+   yields exactly one winner, and after a failed renew `revisionForRecovery`
+   still exposes the last tip while publish stays lost.
+   **Android↔Go live protocol phase is closed** for this matrix. KeePassXC
+   dual-client proofs and native Argon2 device runs remain open; auto-publish
+   stays denied.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
    They run under Go's race detector.
