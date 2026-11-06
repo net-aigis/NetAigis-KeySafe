@@ -100,7 +100,7 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 ## XC checkout for interop
 
 Use `/home/friseer/keepass-pr-submission-20261014/xc` at the coordinated-KDBX
-feature tip (see tip SHA in the latest KeySafe docs commit) on
+feature tip `8d65f9f4` on
 `feature/coordinated-kdbx-20261014`: HTTP/file body bounds, TLS 1.2+/fail-closed
 SSL, settings-UI validation, shared client config checks, unit-tested lease-response
 parsing, publish-ack matching, download hash/ETag binding, shared JSON field
