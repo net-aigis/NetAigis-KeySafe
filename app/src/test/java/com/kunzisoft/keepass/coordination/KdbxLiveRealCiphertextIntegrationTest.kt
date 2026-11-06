@@ -70,6 +70,35 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `writer download after real AES-KDF publish reloads under the same lease`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("writerdl-bin"),
+            localPassword = "writerdl-secret"
+        )
+        val database = databaseId("writerdl")
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            writer.publish(fixture.ciphertext)
+            check(writer.hasLease())
+            val downloaded = writer.download()
+            check(downloaded != null && downloaded.contentEquals(fixture.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = downloaded,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("writerdl-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(fixture.entryId)!!.password
+                    .contentEquals(fixture.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `leased download without acquire fails while read-only tip remains reachable`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
