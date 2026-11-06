@@ -70,6 +70,37 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `leased download without acquire fails while read-only tip remains reachable`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("noleasedl-bin"),
+            localPassword = "noleasedl-secret"
+        )
+        val database = databaseId("noleasedl")
+        client(url, database, "publisher").use { publisher ->
+            publisher.acquire()
+            publisher.publish(fixture.ciphertext)
+        }
+        client(url, database, "reader").use { reader ->
+            mustThrow<IOException> { reader.download() }
+            val tip = reader.downloadReadOnly()
+            check(tip != null && tip.contentEquals(fixture.ciphertext))
+            val reloaded = KdbxCoordinationStrictLoad.openEncrypted(
+                encryptedKdbx = tip,
+                masterCredential = MasterCredential(
+                    KdbxLiveRealCiphertextFixtures.masterPassword.copyOf()
+                ),
+                binaryCacheDirectory = tempFolder.newFolder("noleasedl-reload")
+            )
+            assertTrue(
+                reloaded.database.getEntryById(fixture.entryId)!!.password
+                    .contentEquals(fixture.entryPassword.toCharArray())
+            )
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `double acquire on same real AES-KDF client fails closed`() {
         val url = requireLiveUrl()
         val database = databaseId("dblacq")

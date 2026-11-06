@@ -42,6 +42,8 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
   (Android↔Go only)
 - Double acquire on the same client fails closed while the lease stays held
   (Android↔Go only)
+- Leased download without acquire fails closed; read-only tip still reloads
+  (Android↔Go only)
 - External lease revocation blocks a stale Android publish of real AES-KDF
   ciphertext; the new owner’s revision reloads (Android↔Go only)
 - Two concurrent real AES-KDF PUTs on the same lease/If-Match base: exactly one
