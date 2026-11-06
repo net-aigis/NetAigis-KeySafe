@@ -70,6 +70,25 @@ class KdbxLiveRealCiphertextIntegrationTest {
     }
 
     @Test
+    fun `currentRevision advances from empty to real AES-KDF tip hash`() {
+        val url = requireLiveUrl()
+        val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
+            tempFolder.newFolder("revtrack-bin"),
+            localPassword = "revtrack-secret"
+        )
+        val database = databaseId("revtrack")
+        client(url, database, "writer").use { writer ->
+            writer.acquire()
+            check(writer.currentRevision() == "0")
+            val published = writer.publish(fixture.ciphertext)
+            check(published.length == 64)
+            check(writer.currentRevision() == published)
+            check(writer.download()!!.contentEquals(fixture.ciphertext))
+        }
+        assertFalse(KdbxMergeAuthorizationGate.evaluate().authorized)
+    }
+
+    @Test
     fun `writer download after real AES-KDF publish reloads under the same lease`() {
         val url = requireLiveUrl()
         val fixture = KdbxLiveRealCiphertextFixtures.assembledLocalEditCiphertext(
