@@ -6,6 +6,10 @@ This fork preserves KDBX support and adds an experimental HTTPS coordination fea
 for shared encrypted databases. It is **not yet suitable for production password data**:
 end-to-end concurrency, crash/recovery and security checks are still outstanding.
 
+## Support
+
+- [GitHub Sponsors](https://github.com/sponsors/net-aigis?metadata_project=NetAigis-KeySafe)
+- [PayPal](https://www.paypal.com/ncp/payment/6NQKN48FC3S7J)
 
 ## Shared KDBX on Android and desktop (under development)
 
