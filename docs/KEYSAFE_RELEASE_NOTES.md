@@ -2,11 +2,13 @@
 
 Upstream KeePassDX changelog history remains in the repository as heritage, not as KeySafe store release notes.
 
-## 0.1.0 (2026-11-21)
+## 1.0.0 (2026-11-21)
 
-**versionCode:** 1001  
+**versionCode:** 10000  
 **Android packages:** `de.netaigis.keysafe.libre`, `de.netaigis.keysafe.free`  
-**Desktop:** `.version` `0.1.0` (`de.netaigis.keysafe.desktop`)
+**Desktop:** `.version` `1.0.0` (`de.netaigis.keysafe.desktop`)
+
+First public NetAigis KeySafe release line (supersedes the interim `0.1.0` / `0.1.0-dev` numbering).
 
 ### Highlights
 
@@ -32,9 +34,9 @@ Keystore material is **not** in git (`keysafe-release.jks`, `keystore.properties
 
 ### Store assets
 
-- Fastlane en-US / de-DE descriptions + changelog `1001`
+- Fastlane en-US / de-DE descriptions + changelog `10000`
 - Phone screenshots under `fastlane/metadata/android/*/images/phoneScreenshots/`
 
-## 0.1.0-dev (pre-release)
+## 0.1.0 (superseded)
 
-Development line superseded by 0.1.0.
+Interim tag during packaging; product line continues as **1.0.0**.

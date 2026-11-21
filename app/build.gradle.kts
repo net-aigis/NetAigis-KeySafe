@@ -26,8 +26,8 @@ android {
         applicationId = "de.netaigis.keysafe"
         minSdk = 19
         targetSdk = 36
-        versionCode = 1001
-        versionName = "0.1.0"
+        versionCode = 10000
+        versionName = "1.0.0"
         multiDexEnabled = true
 
         testApplicationId = "de.netaigis.keysafe.tests"

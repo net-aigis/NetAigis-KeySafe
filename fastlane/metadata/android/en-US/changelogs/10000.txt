@@ -1,0 +1,7 @@
+NetAigis KeySafe 1.0.0
+
+• First NetAigis KeySafe public release line
+• Optional HTTPS-coordinated KDBX sync with exclusive lease and offline recovery
+• Conflict-free merge gate for attested dual-client proofs
+• No separate Pro unlock SKU
+• See docs/KEYSAFE_RELEASE_NOTES.md and docs/PRIVACY.md

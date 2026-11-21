@@ -1,9 +1,9 @@
 # NetAigis KeySafe — release checklist
 
-## Closed for 0.1.0
+## Closed for 1.0.0
 
 - [x] Independent display name and Android application identifiers per flavor
-- [x] Project version `0.1.0` / versionCode `1001` (Desktop `.version` `0.1.0`)
+- [x] Project version `1.0.0` / versionCode `10000` (Desktop `.version` `1.0.0`)
 - [x] HTTPS coordinator preserved (protocol NOT certified secure)
 - [x] Replace upstream donation/Pro ownership identification (no Pro SKU)
 - [x] Preserve upstream copyright/license notices and credit

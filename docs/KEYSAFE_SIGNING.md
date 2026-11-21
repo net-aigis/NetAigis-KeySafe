@@ -29,9 +29,9 @@ Store as GitHub Actions secrets (never in the repo):
 
 Decode the store onto the runner ephemeral disk in the release workflow; wipe after upload.
 
-## Local 0.1.0 keystore
+## Local release keystore
 
-Generated on the release builder for 0.1.0 (gitignored):
+Generated on the release builder for 1.0.0 (gitignored):
 
 - Files: `keysafe-release.jks`, `keystore.properties`
 - Alias: `keysafe`
@@ -48,7 +48,7 @@ CI secrets for `.github/workflows/release-apk.yml`:
 
 ## Checklist
 
-- [x] Keystore generated locally for 0.1.0
+- [x] Keystore generated locally (used for 1.0.0 signed APKs)
 - [ ] Offline escrow/backup completed by operator
 - [ ] CI secrets loaded for tag builds
 - [ ] Play App Signing / F-Droid signing policy decided
