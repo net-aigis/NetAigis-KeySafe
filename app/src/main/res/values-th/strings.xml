@@ -189,7 +189,7 @@
     <string name="education_lock_summary">ล็อกฐานข้อมูลอย่างรวดเร็ว คุณสามารถตั้งค่าการล็อกมันหลังจากผ่านไปสักพัก และเมื่อปิดหน้าจอ</string>
     <string name="education_sort_title">จัดเรียงรายการ</string>
     <string name="education_sort_summary">เลือกรายการและกลุ่มที่จะถูกจัดเรียง</string>
-    <string name="html_text_donation">การ&lt;strong&gt;สนับสนุน&lt;/strong&gt;โครงการ &lt;i&gt;(ทางการเงิน รหัสโปรเเกรม หรือการแปล)&lt;/i&gt; จะช่วยให้โครงการนี้ดำเนินต่อไปและเติบโตได้ และคุณยังมีสิทธิ์เข้าร่วมขั้นตอนการปลดล็อก&lt;strong&gt;ลักษณะ&lt;/strong&gt;อีกด้วย</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="html_text_dev_feature_encourage">คุณกำลังสนับสนุนให้นักพัฒนาสร้าง&lt;strong&gt;ฟีเจอร์ใหม่&lt;/strong&gt;และ&lt;strong&gt;แก้ไขข้อบกพร่อง&lt;/strong&gt;ตามที่คุณกล่าวไว้</string>
     <string name="html_text_dev_feature_thanks">ขอขอบคุณสำหรับการร่วมแก้ไขของคุณเป็นอย่างมาก</string>
     <string name="html_text_dev_feature_work_hard">เรากำลังทำงานหนักเพื่อปล่อยให้ใด้ใช้งานฟีเจอร์นี้โดยเร็วที่สุด</string>
@@ -606,9 +606,9 @@
     <string name="education_setup_OTP_summary">ตั้งค่ารหัสผ่านแบบใช้ครั้งเดียว (HOTP/TOTP) เพื่อสร้างโทเค็นสำหรับการตรวจสอบสิทธิ์สองปัจจัย (2FA)</string>
     <string name="education_field_copy_title">คัดลอกเขตข้อมูล</string>
     <string name="education_donation_summary">ช่วยเพิ่มความเสถียร ความปลอดภัย และใส่ฟีเจอร์เข้าไปเพิ่มเติม</string>
-    <string name="html_text_ad_free">ไม่เหมือนแอปจัดการรหัสผ่านอื่นๆ แอปนี้&lt;strong&gt;เป็นซอฟท์แวร์แบบเสรี&lt;/strong&gt;, &lt;strong&gt;ปลอดโฆษณา&lt;/strong&gt; และไม่เก็บข้อมูลผู้ใช้ไว้บนเซิฟเวอร์ ไม่ว่าจะใช้เวอร์ชั่นอะไรก็ตาม</string>
-    <string name="html_text_buy_pro">โดยการซื้อรุ่นโปร คุณจะได้เข้าถึง &lt;strong&gt;ลักษณะของแอปที่มากขึ้น&lt;/strong&gt; และยังมีส่วนช่วย &lt;strong&gt;พัฒนาโครงการโดยชุมชนนี้ต่อไป&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">&lt;strong&gt;ลักษณะของแอป&lt;/strong&gt; นี้ใช้งานได้ ขอขอบคุณการสนับสนุนของคุณ</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="html_text_dev_feature">ฟีเจอร์นี้ &lt;strong&gt;อยู่ในระหว่างการพัฒนา&lt;/strong&gt; และต้องการ &lt;strong&gt;ร่วมแก้ไข&lt;/strong&gt;ของคุณ และเปิดให้ใช้งานเร็วๆนี้</string>
     <string name="html_text_dev_feature_buy_pro">โดยการซื้อรุ่น&lt;strong&gt;โปร&lt;/strong&gt;</string>
     <string name="merge_success">การควบรวมเสร็จสมบูรณ์</string>

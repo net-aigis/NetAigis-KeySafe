@@ -52,12 +52,13 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    second client, successive tip, external lease revocation, and stale
    If-Match 412. Phone instrumented reload via `adb reverse` is closed
    for opaque and real AES-KDF tips
-   (`KdbxCoordinatorLoopbackInstrumentedTest` on OnePlus 13R). GUI
-   click-through and manual app reopen remain open. Cross-open without GUI
-   is closed locally (KeySafe AES-KDF tip → `keepassxc-cli`; XC-cli Argon2
-   DB → KeySafe StrictLoad). Android offline→reconnect protocol path is
-   closed locally (`KdbxOfflineReconnectLiveIntegrationTest`). Auto-publish
-   stays denied. No GitHub Actions pushes until monthly minutes reset.
+   (`KdbxCoordinatorLoopbackInstrumentedTest` on OnePlus 13R). Desktop Xvfb
+   GUI edit+save + dual-writer and Android AVD UI reopen are closed locally
+   (see `KEYSAFE_DUAL_CLIENT_SCENARIOS.md`). Cross-open without GUI is closed
+   locally (KeySafe AES-KDF tip → `keepassxc-cli`; XC-cli Argon2 DB → KeySafe
+   StrictLoad). Android offline→reconnect protocol path is closed locally
+   (`KdbxOfflineReconnectLiveIntegrationTest`). Merge gate authorizes attested
+   conflict-free reports. No GitHub Actions pushes until monthly minutes reset.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
    They run under Go's race detector.

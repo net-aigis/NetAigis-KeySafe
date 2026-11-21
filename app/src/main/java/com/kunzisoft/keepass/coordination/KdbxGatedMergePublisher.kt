@@ -7,8 +7,8 @@ package com.kunzisoft.keepass.coordination
  * [KdbxMergeAuthorizationGate] denies authorization.
  *
  * This is not a lossless plaintext merge writer: the caller must already hold
- * a candidate merged ciphertext. Automatic publication stays off until the
- * gate's standing blockers are cleared with evidence.
+ * a candidate merged ciphertext. Publication runs only after
+ * [KdbxMergeAuthorizationGate] authorizes and lease revalidation succeeds.
  */
 internal object KdbxGatedMergePublisher {
     data class Request(
@@ -73,8 +73,6 @@ internal object KdbxGatedMergePublisher {
             )
         }
 
-        // Unreachable while standing blockers keep authorization denied.
-        // When that changes, publish only after the lease-bound revalidation above.
         val confirmed = request.publish(request.mergedCiphertext)
         require(confirmed.isNotBlank()) { "Coordinator publish acknowledgement missing" }
         return Result(published = true, blockers = emptyList(), confirmedRevision = confirmed)

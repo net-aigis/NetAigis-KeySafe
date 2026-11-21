@@ -14,4 +14,4 @@ by the upstream maintainers. Internal Java/Kotlin package names and some class
 names are retained for binary/source compatibility and attribution, not branding.
 
 The implementation must continue to provide Corresponding Source under GPL when
-binaries are conveyed.
+binaries are conveyed. See also `docs/THIRD_PARTY_NOTICES.md` and `LICENSES/`.

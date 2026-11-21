@@ -275,7 +275,7 @@
     <string name="menu_security_settings_summary">Encryption, key derivation function</string>
     <string name="menu_master_key_settings">Master key settings</string>
     <string name="master_key_settings_summary">Change, renewal</string>
-    <string name="menu_donate">Donate</string>
+    <string name="menu_donate">Contribute</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_copy">Copy</string>
     <string name="menu_move">Move</string>
@@ -668,10 +668,10 @@
     <string name="education_sort_summary">Choose how entries and groups are sorted.</string>
     <string name="education_donation_title">Participate</string>
     <string name="education_donation_summary">Help increase the stability, security and in adding more features.</string>
-    <string name="html_text_ad_free">Unlike many password management apps, this one is &lt;strong&gt;ad-free&lt;/strong&gt;, &lt;strong&gt;copylefted libre software&lt;/strong&gt; and does not collect personal data on its servers, no matter what version you use.</string>
-    <string name="html_text_buy_pro">By buying the pro version, you will have access to this &lt;strong&gt;visual style&lt;/strong&gt; and you will especially help &lt;strong&gt;the realization of community projects.&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">This &lt;strong&gt;visual style&lt;/strong&gt; is available thanks to your generosity.</string>
-    <string name="html_text_donation">By &lt;strong&gt;contributing&lt;/strong&gt; to the project &lt;i&gt;(monetarily, code, translation)&lt;/i&gt;, you will help it to continue to live and thrive, and you will also be eligible for the &lt;strong&gt;theme&lt;/strong&gt; unlocking procedure.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="html_text_dev_feature">This feature is &lt;strong&gt;under development&lt;/strong&gt; and requires your &lt;strong&gt;contribution&lt;/strong&gt; to be available soon.</string>
     <string name="html_text_dev_feature_buy_pro">By buying the &lt;strong&gt;pro&lt;/strong&gt; version,</string>
     <string name="html_text_dev_feature_contibute">By &lt;strong&gt;contributing&lt;/strong&gt;,</string>

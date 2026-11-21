@@ -6,7 +6,7 @@ import com.kunzisoft.keepass.hardware.HardwareKey
 import java.io.File
 
 /**
- * End-to-end gated merge pipeline (still fail-closed / no auto-publish).
+ * End-to-end gated merge pipeline (fail-closed without attestation).
  *
  * Order: strict-load three ciphertexts → three-copy review → conflict-free
  * assemble → ciphertext write+strict reload → [KdbxGatedMergePublisher].

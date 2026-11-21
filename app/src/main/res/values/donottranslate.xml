@@ -32,28 +32,32 @@
 
     <string name="play_store_url" translatable="false">https://play.google.com/store/apps/details?id=%1$s</string>
     <string name="f_droid_url" translatable="false">https://f-droid.org/en/packages/%1$s</string>
-    <string name="keepro_app_id" translatable="false">de.netaigis.keysafe.pro</string>
+    <!-- No separate Pro SKU; keep id aligned with libre package for any residual Play URL builders. -->
+    <string name="keepro_app_id" translatable="false">de.netaigis.keysafe.libre</string>
     <string name="key_driver_app_id" translatable="false">com.kunzisoft.hardware.key</string>
     <string name="key_driver_url" translatable="false">https://gitlab.com/kunzisoft/android-hardware-key-driver/-/releases/</string>
-    <string name="contribution_url" translatable="false">https://net-aigis.de</string>
+    <string name="contribution_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe</string>
     <string name="homepage_url" translatable="false">https://net-aigis.de</string>
+    <string name="privacy_policy_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/PRIVACY.md</string>
     <string name="external_icon_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe</string>
     <string name="issues_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/issues</string>
-    <string name="credentials_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/Credentials</string>
-    <string name="otp_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/OTP</string>
-    <string name="device_unlock_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/Device-Unlocking</string>
-    <string name="magic_keyboard_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/Magikeyboard</string>
-    <string name="clipboard_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/Clipboard</string>
-    <string name="passkeys_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/Passkeys</string>
-    <string name="user_verification_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/User-Verification</string>
-    <string name="autofill_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/Autofill</string>
-    <string name="file_manager_explanation_url" translatable="false">https://github.com/Kunzisoft/KeePassDX/wiki/File-Manager-and-Sync</string>
+    <string name="help_index_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md</string>
+    <string name="credentials_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="otp_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="device_unlock_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="magic_keyboard_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="clipboard_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="passkeys_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="user_verification_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="autofill_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_HELP.md#upstream-feature-explainers-behavior-largely-inherited</string>
+    <string name="file_manager_explanation_url" translatable="false">https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/KEYSAFE_OFFLINE_COORDINATION.md</string>
     <string name="html_rose">--,--`--,{@</string>
 
     <!-- Fork statements: deliberately non-translatable until reviewed translations exist. -->
     <string name="html_about_licence" translatable="false">NetAigis KeySafe © %1$d NetAigis is a modified GPLv3-or-later application based on KeePassDX by Jeremy Jamet / Kunzisoft. Original copyright notices and license terms remain applicable. Source: https://github.com/net-aigis/NetAigis-KeySafe</string>
-    <string name="html_about_privacy" translatable="false">Databases are encrypted locally. When HTTPS coordination is configured, encrypted KDBX files and coordination metadata are sent to the configured server. The server can see the database identifier and connection metadata. Do not use real password databases until security validation is complete.</string>
-    <string name="html_about_contribution" translatable="false">NetAigis KeySafe is an independent fork. See the project repository for support, source code and contributions.</string>
+    <string name="html_about_privacy" translatable="false">Databases are encrypted locally. When HTTPS coordination is configured, encrypted KDBX ciphertext and coordination metadata are sent to the server you configure. That server can see the database identifier, lease/revision metadata and connection metadata. Full policy: https://github.com/net-aigis/NetAigis-KeySafe/blob/main/docs/PRIVACY.md — do not use real password databases until your security validation is complete.</string>
+    <string name="html_about_contribution" translatable="false">NetAigis KeySafe is an independent GPLv3-or-later fork. There is no separate Pro SKU; bundled features are available in this build. Support and source: https://github.com/net-aigis/NetAigis-KeySafe</string>
+    <string name="html_text_keysafe_participate" translatable="false">NetAigis KeySafe has no paid unlock tier. Contributions (code, translations, documentation, or support via the project site) help the fork stay maintained.</string>
 
     <!-- File Path -->
     <string name="database_file_name_default" translatable="false">keysafe</string>

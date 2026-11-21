@@ -633,8 +633,8 @@
     <string name="education_validate_entry_title">Kirje kontrollimine ja salvestamine</string>
     <string name="education_entry_new_field_title">Omaloodud väljade lisamine</string>
     <string name="education_entry_new_field_summary">Registreeri täiendav väli, lisa sinna sisu ning soovi korral ka kaitse seda.</string>
-    <string name="html_text_buy_pro">Kui ostaksid, Pro-versiooni, siis saad võimaluse kasutada seda &lt;strong&gt;välimust&lt;/strong&gt; ja aitad oluliselt määral &lt;strong&gt;kogukonna projekte realiseerida.&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">See &lt;strong&gt;välimus &lt;/strong&gt; on saadaval tänu sinu heldusele.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="html_text_dev_feature">Hetkel on see funktsionaalsus &lt;strong&gt;veel arendusjärgus&lt;/strong&gt; ja vajab lähiajal saadaval olemiseks sinu &lt;strong&gt;panust&lt;/strong&gt;.</string>
     <string name="html_text_dev_feature_buy_pro">Ostes &lt;strong&gt;Pro-versiooni&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature_contibute">või &lt;strong&gt;tehes kaastööd&lt;/strong&gt;,</string>
@@ -643,8 +643,8 @@
     <string name="education_setup_OTP_title">Seadista ühekordne salasõna</string>
     <string name="enter">Sisestusklahv (Enter)</string>
     <string name="education_validate_entry_summary">Ära unusta kirje sisu kontrollida ja salvestada.\n\nKui automaatne lukustus käivitub ja sa unustad, et muutmine oli pooleli, siis võid kaotada oma muudatused.</string>
-    <string name="html_text_ad_free">Erinevalt paljudest teistest salasõnahalduritest, on meie oma &lt;strong&gt;reklaamivaba&lt;/strong&gt; ja &lt;strong&gt;avatud lähtekoodiga vaba tarkvara&lt;/strong&gt;, mis ei kogu kasutajate isiklikke andmeid oma serveritesse ja seda kõikide versioonide puhul.</string>
-    <string name="html_text_donation">&lt;strong&gt;Aidates kaasa&lt;/strong&gt; selle projekti tegevusele &lt;i&gt;(rahaliselt, koodi kirjutades või tõlkides)&lt;/i&gt;, aitad kogu ettevõtmisel areneda ning soovi korral võid kasutada ka &lt;strong&gt;seda kujundust&lt;/strong&gt;.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="device_unlock_keystore_warning">See funktsionaalsus salvestab krüptitud salasõnad ja kasutajanimed sinu nutiseadme turvalises võtmehoidlas.\n\nSõltuvalt sinu nutiseadme operatsioonisüstemi konkreetsest implementatsioonist, ei pruugi see lahendus siiski täismahus toimida.\n\nPalun kontrolli oma seadme võtmehoidla (KeyStore) ühilduvust ja turvalisust tootjalt ja/või tarkvara loojalt.</string>
     <string name="keyboard_previous_fill_in_summary">Peale tegevust „Automaatne võtmetoiming“ lülita automaatselt tagasi eelmisele klahvistikule</string>
     <string name="education_read_only_summary">Saad juhtida sessioonil kasutatavat avamisviisi.\n\n„Kirjutuskaitstud“ tagab, et juhuslike muudatustega ei läheks andmeid kaotsi.\n„Muudetav“ võimaldab sul lisada, kustutada või muuta kõiki andmebaasi kirjeid.</string>

@@ -304,8 +304,8 @@
     <string name="education_field_copy_title">Bölməni (sahəni) nüsxələyin</string>
     <string name="education_field_copy_summary">Nüsxələnmiş bölmələr (sahələr) istənilən yerə nüsxələnə bilər.\n\nÜntünlük verdiyiniz form doldurma metodunu seçin.</string>
     <string name="education_lock_title">Məlumat bazasını kilidləyin</string>
-    <string name="html_text_donation">Azadlığımızı qorumaq və daima aktiv olmağınız üçün sizin &lt;strong&gt;yardımınıza güvənirik.&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">Bu &lt;strong&gt;görünüş stili&lt;/strong&gt;sizin əliaçıqlığınız sayəsində mövuddur.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="html_text_dev_feature">Bu xüsusiyyət &lt;strong&gt;hazırlıq mərhələsindədir&lt;/strong&gt; və tezliklə &lt;strong&gt;istifadə verilməsi üçün sizin &lt;strong&gt;yardımınıza ehtiyyacı var.</string>
     <string name="html_text_dev_feature_encourage">tərtibatçıları &lt;strong&gt;yeni funksiyalar əlavə etməyə&lt;/strong&gt;və &lt;strong&gt;sizin rəylərinizə əsasən &lt;/strong&gt;xətaları düzəltməyə həvəsləndirirsiniz.</string>
     <string name="contribute">Yardım et</string>
@@ -331,7 +331,7 @@
     <string name="clipboard">Mübadilə buferi</string>
     <string name="clipboard_explanation_summary">Cihazınızın mübadilə buferindən istifadə edərək şifrə sahələrini (bölmələrini) nüsxələyin</string>
     <string name="clipboard_warning">Əgər mübadilə buferinin avtomatik silinməsi uğursuz olarsa, onun tarixçəsini əllə silin.</string>
-    <string name="html_text_ad_free">Digər bir çox şifrə menecerlerindən fərqli olaraq, bu tətbiq &lt;strong&gt;reklamsız&lt;/strong&gt;,&lt;strong&gt;azad lisenziyaya sahibdir&lt;/strong&gt; və hansı versiyanı istifadə etdiyinizdən asılı olmayaraq, şəxsi məlumatlarınızı öz serverlərində toplamır.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="device_unlock_keystore_warning">Bu xüsusiyyət, şifrələnən şəxsiyyəti təsdiq edən məlumatları cihazın təhlükəsiz açar bazasında saxlayacaqdır.\n\nƏməliyyat sisteminin yerli APİ-nin tətbiqindən asılı olaraq, tam olaraq funksional olmaya bilər.\n\nCihazın istehsalçısı və istifadə etdiyiniz ROM-un tərtibatçısı ilə açar bazasının uyğunluğu və təhlükəsizliyini yoxlayın.</string>
     <string name="autofill_inline_suggestions_title">Cümlə daxili təkliflər</string>
     <string name="autofill_inline_suggestions_summary">Birbaşa uyğun olan klaviaturadan avtomatik doldurma təkliflərini göstərməyə çalış</string>
@@ -588,7 +588,7 @@
     <string name="education_sort_summary">Şifrə və qrupların necə sıralandığını seçin.</string>
     <string name="education_donation_title">İştirak et</string>
     <string name="education_donation_summary">Stabilliyin, təhlükəsizliyin artırılmasına və daha çox funksiyaların əlavə edilməsinə yardım edin.</string>
-    <string name="html_text_buy_pro">Pro versiyasını alaraq, bu &lt;strong&gt;görünüş stilindən&lt;/strong&gt;istifadə edə və xüsusilə &lt;strong&gt;ictimai layihələrinin həyata keçirilməsinə yardım etmiş olacaqsınız.&lt;/strong&gt;</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
     <string name="html_text_dev_feature_buy_pro">&lt;strong&gt;Pro&lt;/strong&gt;versiyasını alaraq,</string>
     <string name="html_text_dev_feature_contibute">&lt;strong&gt;Yardım göstərərək&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature_thanks">Yardım etdiyiniz üçün çox sağ olun.</string>

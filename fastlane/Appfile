@@ -1,2 +1,4 @@
-json_key_file "./../Integration/Google_Play_Android_Developer.json" # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
-package_name "com.kunzisoft.keepass.free"
+# NetAigis KeySafe — Fastlane package identity (Libre FOSS channel).
+# Provide KEYSAFE_PLAY_JSON_KEY for Play uploads; do not commit the JSON key.
+json_key_file ENV.fetch("KEYSAFE_PLAY_JSON_KEY", "./../Integration/Google_Play_Android_Developer.json")
+package_name "de.netaigis.keysafe.libre"

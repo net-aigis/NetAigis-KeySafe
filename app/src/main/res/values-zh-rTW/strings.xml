@@ -299,8 +299,8 @@
     <string name="hint_pass">密碼</string>
     <string name="holder">持卡人</string>
     <string name="homepage">首頁</string>
-    <string name="html_text_ad_free">不同於大多數的密碼管理應用，無論你是使用免費版本還是付費版本的 NetAigis KeySafe，這都是一款&lt;strong&gt;沒有廣告&lt;/strong&gt;，&lt;strong&gt;基於 copylefted 版權協議的自由軟體&lt;/strong&gt;。同時，本軟體的任何版本都不會收集你的任何個人資訊。</string>
-    <string name="html_text_buy_pro">通過購買高級版本，你將解鎖全部&lt;strong&gt;主題樣式&lt;/strong&gt;，重要的是，你會為&lt;strong&gt;社區項目的進行&lt;/strong&gt;提供幫助</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
     <string name="html_text_dev_feature">此功能目前&lt;strong&gt;仍在開發中&lt;/strong&gt;，&lt;strong&gt;捐助&lt;/strong&gt;將使該功能很快變得可用。</string>
     <string name="html_text_dev_feature_buy_pro">通過購買&lt;strong&gt;專業&lt;/strong&gt;版，</string>
     <string name="html_text_dev_feature_contibute">通過&lt;strong&gt;貢獻&lt;/strong&gt;，</string>
@@ -308,8 +308,8 @@
     <string name="html_text_dev_feature_thanks">非常感謝你的捐助與貢獻。</string>
     <string name="html_text_dev_feature_upgrade">記得安裝最新版本來確保應用程式是最新的。</string>
     <string name="html_text_dev_feature_work_hard">我們正在努力的開發並盡快地發佈新功能。</string>
-    <string name="html_text_donation">透過為專案&lt;strong&gt;作出貢獻&lt;/strong&gt;&lt;i&gt;（財政、代碼、翻譯）&lt;/i&gt;，你將幫助其繼續發展，並且你也將有資格獲得&lt;strong&gt;主題&lt;/strong&gt;解鎖步驟。</string>
-    <string name="html_text_feature_generosity">此&lt;strong&gt;主題樣式&lt;/strong&gt;已可用，感謝你的慷慨相助。</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="icon_pack_choose_summary">應用程式使用的圖示包</string>
     <string name="icon_pack_choose_title">圖示包</string>
     <string name="icon_section_custom">自定義</string>

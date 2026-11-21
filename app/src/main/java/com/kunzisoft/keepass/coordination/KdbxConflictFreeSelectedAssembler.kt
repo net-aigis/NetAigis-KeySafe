@@ -11,8 +11,8 @@ import java.util.UUID
  * In-memory assembly of a conflict-free selected KDBX model (phase 3B).
  *
  * Applies [KdbxThreeCopyReview] LOCAL/REMOTE/IDENTICAL/UNCHANGED decisions to
- * clone groups, entries and tombstones. Does **not** authorize merge, serialize
- * ciphertext, revalidate a lease or publish. Database-wide metadata must be
+ * clone groups, entries and tombstones. Does **not** serialize ciphertext,
+ * revalidate a lease or publish by itself. Database-wide metadata must be
  * entirely [KdbxDatabaseMetadataReview.Source.UNCHANGED] in this slice.
  */
 internal object KdbxConflictFreeSelectedAssembler {
@@ -39,9 +39,6 @@ internal object KdbxConflictFreeSelectedAssembler {
             .map { "${it.key}:${it.source}" }
         require(changedMetadata.isEmpty()) {
             "This assembler slice requires unchanged database-wide metadata; changed=$changedMetadata"
-        }
-        require(!report.mergeAuthorization.authorized) {
-            "Assembly must not run under an authorized merge decision yet"
         }
 
         val rootId = requireNotNull(base.rootGroup?.nodeId?.id) { "Base root group missing" }

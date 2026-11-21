@@ -522,7 +522,7 @@
 \n\"Idazketaren aurka babestuta\" datu-basean nahi ez diren aldaketak saihesten ditu.
 \n\"Editagarri\" datuak nahi dituzun moduan gehitu, ezabatu edo aldatzen uzten du.</string>
     <string name="education_donation_summary">Parte hartu egonkortasuna, segurtasuna eta ezaugarri gehiago gehitzeko.</string>
-    <string name="html_text_ad_free">Pasahitzak kudeatzeko aplikazio asko ez bezala, hau &lt;strong&gt; iragarkirik gabekoa&lt;/strong&gt; eta &lt;strong&gt; copyleft software libreako&lt;/strong&gt; da eta ez du datu pertsonalik biltzen zerbitzarietan, aplikazioaren edozein bertsiotan.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="html_text_dev_feature">Ezaugarri hau &lt;strong&gt;garapen prozesuan &lt;/strong&gt; dago eta zure &lt;strong&gt; ekarpena&lt;/strong&gt; behar du ahalik eta lehen eskuragarri egoteko.</string>
     <string name="credential_before_click_device_unlock_button">Idatzi pasahitza eta klikatu botoi hau.</string>
     <string name="properties">Propietateak</string>
@@ -541,7 +541,7 @@
     <string name="temp_device_unlock_timeout_title">Gailu desblokeatzearen iraungitzea</string>
     <string name="device_unlock_timeout">Gailu desblokeatzea erabiltzeko denbora muga</string>
     <string name="lock">Blokeatu</string>
-    <string name="html_text_donation">Gure askatasuna mantentzeko eta beti aktibo egoteko, aintzat dugu zure &lt;strong&gt;ekarpena.&lt;/strong&gt;</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="education_read_only_title">Babestu zure datu-basea idazketen aurka</string>
     <string name="education_generate_password_title">Sortu pasahitz segurua</string>
     <string name="database_data_compression_title">Datuen konpresioa</string>
@@ -616,8 +616,8 @@
     <string name="education_sort_title">Ordenatu elementuak</string>
     <string name="education_sort_summary">Aukeratu sarrerak eta taldeak nola ordenatu.</string>
     <string name="education_donation_title">Parte hartu</string>
-    <string name="html_text_buy_pro">Pro bertsioa erostean, &lt;strong&gt;estilo bisual&lt;/strong&gt; hau erabili ahalko duzu eta zure laguntza eskeniko duzu &lt;strong&gt;proiektu komunitarioak garatzeko.&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">&lt;strong&gt;Estilo bisual&lt;/strong&gt; hau zure eskuzabaltasunari esker dago eskuragarri.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="html_text_dev_feature_buy_pro">&lt;strong&gt;Pro&lt;/strong&gt; bertsioa erostean,</string>
     <string name="html_text_dev_feature_contibute">&lt;strong&gt;kontribuituz&lt;/strong&gt;,</string>
     <string name="download_attachment">Deskargatu %1$s</string>

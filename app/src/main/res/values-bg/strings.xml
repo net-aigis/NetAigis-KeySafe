@@ -411,7 +411,7 @@
     <string name="html_text_dev_feature_buy_pro">Купувайки версията &lt;strong&gt;Pro&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature_contibute">&lt;strong&gt;Участвайки в проекта&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature">Тази възможност е &lt;strong&gt;в разработка&lt;/strong&gt; и изисква вашето &lt;strong&gt;участие&lt;/strong&gt;, за да бъде достъпна скоро.</string>
-    <string name="html_text_feature_generosity">Тази &lt;strong&gt;тема&lt;/strong&gt; е достъпна, благодарение на вашата щедрост.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="invalid_db_sig">Форматът на хранилището не може да бъде определен.</string>
     <string name="list_entries_show_username_summary">Показват се потребителските имена в списъка със записите</string>
     <string name="list_entries_show_username_title">Потребители</string>
@@ -441,11 +441,11 @@
     <string name="enable_keep_screen_on_title">Екранът винаги включен</string>
     <string name="enable_keep_screen_on_summary">Поддържа екрана включен при преглед или промяна на запис</string>
     <string name="enable_auto_save_database_summary">Запазва хранилището при важни действия (в режим „четене и запис“)</string>
-    <string name="html_text_ad_free">За разлика от много други приложения за управление на пароли това е &lt;strong&gt;без реклами&lt;/strong&gt;, &lt;strong&gt;свободно от лицензи&lt;/strong&gt; и не събира лични данни на сървърите си без значение каква версия използвате.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="html_text_dev_feature_upgrade">Не забравяйте да обновявате приложението.</string>
     <string name="html_text_dev_feature_encourage">вие поощрявате разработчиците да добавят &lt;strong&gt;нови възможности&lt;/strong&gt; и да &lt;strong&gt;отстраняват дефекти&lt;/strong&gt; според вашите отзиви.</string>
-    <string name="html_text_buy_pro">Купувайки версията Pro ще имате достъп до тази &lt;strong&gt;тема&lt;/strong&gt; и особено ще помогнете за &lt;strong&gt;изпълнението на проекти на общността&lt;/strong&gt;.</string>
-    <string name="html_text_donation">Като &lt;strong&gt;допринасяте&lt;/strong&gt; за проекта &lt;i&gt;(финансово, с код или преводи)&lt;/i&gt; му помагате да живее и процъвтява, а също получавате процедурата за отключване на &lt;strong&gt;темите&lt;/strong&gt;.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="hint_keyfile">Файл с ключ</string>
     <string name="invalid_algorithm">Грешен алгоритъм.</string>
     <string name="description_app_properties">Свойства за управление на настройките на NetAigis KeySafe</string>

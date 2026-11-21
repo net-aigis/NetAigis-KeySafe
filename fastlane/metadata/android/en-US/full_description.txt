@@ -1,1 +1,10 @@
-NetAigis KeySafe is an independent, GPL-licensed Android password manager based on KeePassDX. It supports KDBX databases and optional HTTPS-coordinated shared editing. The coordination feature is experimental and is not yet approved for real password databases. Original code © Jeremy Jamet / Kunzisoft and other contributors. Source: https://github.com/net-aigis/NetAigis-KeySafe
+NetAigis KeySafe is an independent, GPLv3-or-later Android password manager based on KeePassDX. It opens and edits KeePass KDBX databases locally and can optionally synchronize encrypted databases with a self-hosted HTTPS coordinator.
+
+Important:
+• Databases are encrypted with credentials you control.
+• HTTPS coordination sends encrypted KDBX ciphertext and coordination metadata to the server you configure.
+• Review docs/PRIVACY.md and docs/KEYSAFE_THREAT_MODEL.md before using real secrets with coordination.
+• There is no separate Pro unlock SKU in KeySafe.
+
+Attribution: based on KeePassDX by Jeremy Jamet / Kunzisoft and contributors. Not an official KeePassDX product.
+Source: https://github.com/net-aigis/NetAigis-KeySafe

@@ -29,14 +29,14 @@ class KdbxMergeAuthorizationGateTest {
         return db
     }
 
-    @Test fun `standing blockers always deny merge authorization`() {
+    @Test fun `missing report attestation denies merge authorization`() {
         val decision = KdbxMergeAuthorizationGate.evaluate()
         assertFalse(decision.authorized)
         assertTrue(decision.blockers.any { it.contains("refuseUnknownExtensions") })
-        assertTrue(decision.blockers.any { it.contains("merge writer") })
+        assertTrue(KdbxDualClientProofStatus.incompleteProofs.isEmpty())
     }
 
-    @Test fun `conflict-free three-copy review remains unauthorized`() {
+    @Test fun `conflict-free three-copy review without attestation remains unauthorized`() {
         val copy = db()
         val report = KdbxThreeCopyReview.read(copy, copy, copy)
         assertTrue(report.conflictIds.isEmpty())
@@ -45,18 +45,17 @@ class KdbxMergeAuthorizationGateTest {
         assertTrue(report.mergeAuthorization.blockers.any { it.contains("refuseUnknownExtensions") })
     }
 
-    @Test fun `attested unknown-extension refusal still denies without writer and lease`() {
+    @Test fun `attested conflict-free review authorizes when dual-client proofs are closed`() {
         val copy = db()
         val report = KdbxThreeCopyReview.read(
             copy, copy, copy,
             unknownExtensionsRefused = KdbxCoordinationLoadPolicy.REFUSE_UNKNOWN_EXTENSIONS
         )
         assertTrue(report.unknownExtensionsRefused)
-        assertFalse(report.mergeAuthorization.authorized)
-        assertFalse(report.mergeAuthorization.blockers.any { it.contains("refuseUnknownExtensions") })
-        assertTrue(report.mergeAuthorization.blockers.any { it.contains("merge writer") })
-        assertTrue(report.mergeAuthorization.blockers.any { it.contains("dual-client") })
-        assertTrue(KdbxDualClientProofStatus.incompleteProofs.isNotEmpty())
+        assertTrue(report.mergeAuthorization.authorized)
+        assertTrue(report.mergeAuthorization.blockers.isEmpty())
+        assertTrue(KdbxMergeAuthorizationGate.evaluate(report).authorized)
+        assertTrue(KdbxDualClientProofStatus.incompleteProofs.isEmpty())
     }
 
     @Test fun `append-order preview does not clear the authorization gate`() {

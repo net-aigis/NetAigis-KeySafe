@@ -370,7 +370,7 @@
     <string name="education_lock_summary">Zaključaj bazu podataka brzo, aplikaciju možeš postaviti tako da bazu nakon nekog vremena zaključa i kad se ekran isključi.</string>
     <string name="show_recent_files_summary">Prikaži mjesto nedavnih baza podataka</string>
     <string name="education_device_unlock_summary">Za brzo otključavanje baze podataka, poveži lozinku sa skeniranom biometrijom ili podacima za prijavu uređaja.</string>
-    <string name="html_text_donation">&lt;strong&gt;Doprinosom&lt;/strong&gt; projektu &lt;i&gt;(novčano, kodom, prijevodom)&lt;/i&gt; pomažeš mu da živi i napreduje, a također stječeš pravo na postupak otključavanja &lt;strong&gt;tema&lt;/strong&gt;.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="kdf_explanation">Za stvaranje ključa za algoritam šifriranja, glavni ključ se transformira pomoću funkcije za generiranje ključeva koja sadrži slučajnu komponentu.</string>
     <string name="lock_database_back_root_summary">Zaključaj bazu podataka kad korisnik pritisne gumb za natrag na glavnom ekranu</string>
     <string name="hide_broken_locations_title">Sakrij pokvarene poveznice baze podataka</string>
@@ -395,7 +395,7 @@
     <string name="education_new_node_title">Dodaj elemente u bazu podataka</string>
     <string name="education_donation_summary">Pomogni povećati stabilnost i sigurnost dodavanjem dodatnih funkcija.</string>
     <string name="error_string_type">Ovaj se tekst ne poklapa sa zatraženim elementom.</string>
-    <string name="html_text_buy_pro">Kupnjom pro verzije imat ćaš pristup ovom &lt;strong&gt;vizualnom stilu&lt;/strong&gt; i k tome ćeš pomoći &lt;strong&gt;u realizaciji projekata zajednice.&lt;/strong&gt;</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
     <string name="keyboard_auto_go_action_title">Automatska radnja tipke</string>
     <string name="education_sort_title">Razvrstavanje elemenata</string>
     <string name="autofill_application_id_blocklist_summary">Popis blokiranja koja sprečavaju automatsko ispunjavanje aplikacija</string>
@@ -404,7 +404,7 @@
 \n„Zaštićeno od pisanja” sprečava nenamjerne promjene u bazi podataka.
 \n„Promjenjivo” omogućuje dodavanje, brisanje ili mijenjanje svih elemenata.</string>
     <string name="education_search_summary">Upiši naslov, korisničko ime ili sadržaj drugih polja za pronalaženje lozinki.</string>
-    <string name="html_text_feature_generosity">Ovaj &lt;strong&gt;visualni stil&lt;/strong&gt; dostupan je zahvaljujući tvojoj darežljivosti.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="education_unlock_summary">Upiši lozinku i/ili datoteku ključa za otključavanje baze podataka.
 \n
 \nSpremi sigurnosnu kopiju datoteke baze podataka na sigurno mjesto nakon svake promjene.</string>
@@ -415,7 +415,7 @@
     <string name="download">Preuzimanje</string>
     <string name="lock_database_show_button_summary">Prikazuje gumb za zaključavanje u korisničkom sučelju</string>
     <string name="remember_keyfile_locations_summary">Pamti mjesto spremanja datoteka ključeva</string>
-    <string name="html_text_ad_free">Za razliku od mnogih aplikacija za upravljanje lozinkama, ova je &lt;strong&gt;bez oglasa&lt;/strong&gt;, &lt;strong&gt;copylefted slobodan softver&lt;/strong&gt; i ne prikuplja osobne podatke na svojim poslužiteljima, bez obzira na korištenu verziju.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="rounds">Transformacijski prolazi</string>
     <string name="download_initialization">Inicijaliziranje …</string>
     <string name="education_donation_title">Sudjeluj</string>

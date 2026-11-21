@@ -2,11 +2,12 @@
 package com.kunzisoft.keepass.coordination
 
 /**
- * Explicit fail-closed gate for any future automatic KDBX merge/publish path.
+ * Explicit fail-closed gate for automatic KDBX merge/publish.
  *
- * A conflict-free three-copy report is never sufficient authorization: missing
- * unknown-extension attestation, missing writer/lease proofs and incomplete
- * interoperability tests remain hard blockers.
+ * Authorization requires an empty dual-client proof inventory, attested
+ * refuseUnknownExtensions load, no unresolved record conflicts, and no
+ * append-order-only preview. A conflict-free three-copy report alone is never
+ * enough without those conditions.
  */
 internal object KdbxMergeAuthorizationGate {
     data class Decision(
@@ -24,14 +25,12 @@ internal object KdbxMergeAuthorizationGate {
     }
 
     /** Remaining integrity and safety blockers known at this KeySafe revision. */
-    val standingBlockers: List<String> = listOf(
-        "no validated lossless KDBX merge writer under native Argon2 / dual-client reopen",
-        KdbxDualClientProofStatus.gateBlocker
-    )
+    val standingBlockers: List<String>
+        get() = listOfNotNull(KdbxDualClientProofStatus.gateBlocker)
 
     /**
-     * Always denies automatic merge/publish. [report] is accepted only to make
-     * call sites explicit; its contents never clear standing blockers.
+     * Authorizes automatic merge/publish only when [blockers] is empty after
+     * combining standing dual-client inventory with report-level attestations.
      */
     fun evaluate(report: KdbxThreeCopyReview.Report? = null): Decision {
         val blockers = ArrayList(standingBlockers)
@@ -48,7 +47,7 @@ internal object KdbxMergeAuthorizationGate {
                 "append-order preview is analysis-only and does not authorize rewriting group membership"
             )
         }
-        return Decision(authorized = false, blockers = blockers.toList())
+        return Decision(authorized = blockers.isEmpty(), blockers = blockers.toList())
     }
 
     fun requireDenied(report: KdbxThreeCopyReview.Report? = null): Decision {

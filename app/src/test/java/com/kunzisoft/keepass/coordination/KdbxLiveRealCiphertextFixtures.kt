@@ -69,7 +69,7 @@ internal object KdbxLiveRealCiphertextFixtures {
         val local = copy(localPassword)
         val remote = copy("unchanged")
         val report = KdbxThreeCopyReview.read(base, local, remote, unknownExtensionsRefused = true)
-        check(!report.mergeAuthorization.authorized)
+        check(report.mergeAuthorization.authorized)
         val assembled = KdbxConflictFreeSelectedAssembler.assemble(base, local, remote, report)
         val written = KdbxAssembledCiphertextWriter.writeAndStrictReload(
             assembled = assembled,

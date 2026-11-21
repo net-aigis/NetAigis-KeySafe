@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -14,13 +16,18 @@ android {
     compileSdk = 36
 
     val gmsPackage = "com.google.android.gms"
+    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    val keystoreProperties = Properties()
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
+    }
 
     defaultConfig {
         applicationId = "de.netaigis.keysafe"
         minSdk = 19
         targetSdk = 36
-        versionCode = 1000
-        versionName = "0.1.0-dev"
+        versionCode = 1001
+        versionName = "0.1.0"
         multiDexEnabled = true
 
         testApplicationId = "de.netaigis.keysafe.tests"
@@ -33,9 +40,23 @@ android {
         manifestPlaceholders["googlePlayServicesPackage"] = gmsPackage
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -169,5 +190,8 @@ dependencies {
     testImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.junit)
 }

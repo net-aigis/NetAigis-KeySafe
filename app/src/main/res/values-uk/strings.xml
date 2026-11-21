@@ -258,10 +258,10 @@
     <string name="html_text_dev_feature_buy_pro">Купуючи версію &lt;strong&gt;pro&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature_contibute">&lt;strong&gt;Допомагаючи&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature">Ця функція ще &lt;strong&gt;розробляється&lt;/strong&gt; та потребує вашого &lt;strong&gt;внеску&lt;/strong&gt;, щоб незабаром стати доступною.</string>
-    <string name="html_text_donation">&lt;strong&gt;Допомагаючи&lt;/strong&gt; проєкту &lt;i&gt;(фінансово, кодом, перекладами)&lt;/i&gt;, ви допоможете йому продовжувати існувати та процвітати, а також матимете право на процедуру розблокування &lt;strong&gt;теми&lt;/strong&gt;.</string>
-    <string name="html_text_feature_generosity">Цей &lt;strong&gt;стиль оформлення&lt;/strong&gt; став можливим завдяки вашій щедрості.</string>
-    <string name="html_text_buy_pro">Купуючи версію Pro, ви отримуєте доступ до цих &lt;strong&gt;стилів оформлення&lt;/strong&gt; та дуже допомагаєте &lt;strong&gt;розробці вільних проєктів.&lt;/strong&gt;</string>
-    <string name="html_text_ad_free">На відміну від багатьох менеджерів паролів, цей є &lt;strong&gt;вільним від реклами&lt;/strong&gt;, &lt;strong&gt;вільним програмним забезпеченням з copyleft&lt;/strong&gt; та не збирає персональні дані на своїх серверах, незалежно від версії, якою ви користуєтесь.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="education_donation_summary">Допоможіть підвищити стабільність і безпеку та додавати нові функції.</string>
     <string name="education_donation_title">Долучайтеся</string>
     <string name="education_sort_summary">Виберіть порядок сортування записів і груп.</string>

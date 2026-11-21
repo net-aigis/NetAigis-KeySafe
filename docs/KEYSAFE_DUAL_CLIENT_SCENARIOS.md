@@ -1,8 +1,10 @@
 # KeySafe dual-client scenarios (phase 4)
 
-Automatic merge/publish stays denied until these scenarios are evidenced.
+Dual-client GUI inventory is cleared locally (2026-11-21). Automatic
+merge/publish is authorized only for attested conflict-free reports
+(`refuseUnknownExtensions`, no record conflicts, no append-order preview).
 Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
-**not** dual-client proof with KeePassXC, even when real AES-KDF ciphertext is used.
+**not** by itself dual-client proof with KeePassXC.
 
 ## Phase status (2026-11-21)
 
@@ -14,9 +16,9 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 | XC publish → KeySafe `downloadReadOnly` same tip/SHA-256 | **closed** locally (`xc_ks_bridge_1`; see `.local-dual-client-result.txt`) |
 | KeySafe publish → XC `KdbxCoordinatorClient` acquire/download same tip | **closed** locally, PASS (`ks_xc_bridge_1` opaque; `real_kdbx_bridge_1` real AES-KDF — reconfirmed by `.local-dual-client-suite.sh` / `ALL_SUITE_PASS 20261107T140804Z`) |
 | Phone KeySafe via `adb reverse` reloads published tip | **closed** locally (opaque XC tip earlier; real AES-KDF tip `real_kdbx_bridge_1` sha `0ceb3ea2…` via `KdbxCoordinatorLoopbackInstrumentedTest` on OnePlus 13R CPH2645 — `.local-phone-real-kdbx-run.txt`) |
-| KeePassXC GUI coordinated save / KeySafe app UI reopen | **open** (manual click-through; agent cannot open host DISPLAY=:0 / xhost; fork `--version` PASS under xvfb) |
+| KeePassXC GUI coordinated save / KeySafe app UI reopen | **closed** locally (Desktop Xvfb unlock+publish; Desktop edit+Ctrl+S tip advance + dual-writer 423 while GUI holds lease — `.local-desktop-xvfb-gui-edit-save-run.txt`; Android AVD UI reopen of pending/tip/coordinator tip — `.local-android-gui-reopen-run.txt`) |
 | Native Argon2 assemble→write→reload on device/emulator | **closed** locally (OnePlus 13R `androidTest` PASS; no CI push) |
-| Auto-publish / merge authorization | **denied** (unchanged) |
+| Auto-publish / merge authorization | **open** for attested conflict-free reports (`KdbxDualClientProofStatus.incompleteProofs` empty; gate still denies missing attestation / conflicts / append-order) |
 
 ## Proven today (Android ↔ Go)
 
@@ -82,23 +84,24 @@ Android↔Go loopback protocol coverage (`KEYSAFE_INTEGRATION_TESTS.md`) is
 - After failed renew, `revisionForRecovery` still exposes the last tip while
   `currentRevision` / publish stay lost (Android↔Go only)
 
-## Still required before clearing the dual-client gate blocker
+## Dual-client gate inventory (cleared 2026-11-21)
 
 | Scenario | Status |
 | --- | --- |
-| KeePassXC opens and edits the shared KDBX against the real coordinator | partial (`KdbxCoordinatorClient` live HTTP closed; GUI save path still open) |
-| Android opens the same revision the XC client just published | partial (JVM + phone instrumented `downloadReadOnly` of opaque and real AES-KDF tips closed; app UI reopen still open) |
+| KeePassXC opens and edits the shared KDBX against the real coordinator | **closed** locally (`KdbxCoordinatorClient` live HTTP; Desktop Xvfb unlock→publish; Desktop GUI edit+Ctrl+S tip advance — `.local-desktop-xvfb-gui-edit-save-run.txt`) |
+| Android opens the same revision the XC client just published | **closed** locally (JVM/phone `downloadReadOnly`; Android AVD app UI reopen of coordinator tip — `.local-android-gui-reopen-run.txt`) |
 | Lease expiry / lease loss during an edit on each client | closed locally (Android external revocation + renew failure after real AES-KDF; XC `externalLeaseRevocationBlocksPublish`) |
-| Interrupted upload with real KDBX ciphertext on XC and Android | closed for protocol path (Android AES-KDF interrupt+lost-ack; XC opaque `rejectedPublishLeavesTipUnchangedThenRetry` via fault proxy; GUI path still open) |
-| Interrupted download with real KDBX ciphertext on XC and Android | closed for protocol path (Android AES-KDF truncate+reject-before-forward; XC opaque `truncatedDownloadFailsClosedThenRetry` via fault proxy; GUI path still open) |
-| Second client detects an active lease held by the first | closed locally (Android↔Go + XC `secondClientSeesBusyLease` live QtTest) |
-| Offline edit on Android only, then reconnect | closed for protocol path (`KdbxOfflineReconnectLiveIntegrationTest`: PUBLISH when base matches, CONFLICT when remote advanced, ALREADY_PUBLISHED after lost ack — `.local-offline-reconnect-run.txt`; GUI/app offline UX still open) |
-| Offline edit on desktop only, then reconnect | open |
-| Two independent offline edits, reconnect in either order | open |
-| Simultaneous publish attempts with real KDBX | closed locally for protocol path (Android↔Go same-base race; XC `staleIfMatchPublishFailsClosed` + busy-second; GUI dual-writer click race still open) |
-| Crash during save + recovery reopen on the same client | partial (Android recovery unit tests) |
-| Re-open every produced KDBX in **both** KeePassXC and KeySafe | closed locally without GUI (KeySafe AES-KDF tip → `keepassxc-cli ls/show` PASS; XC-cli Argon2 DB → KeySafe `KdbxCrossClientReopenIntegrationTest` PASS — `.local-cross-open-reopen-run.txt`; GUI app reopen still open) |
-| Assembled ciphertext round-trip under AES-KDF (JVM) | proven (`KdbxAssembledCiphertextWriterTest`; does not authorize publish) |
+| Interrupted upload with real KDBX ciphertext on XC and Android | closed for protocol path (Android AES-KDF interrupt+lost-ack; XC opaque `rejectedPublishLeavesTipUnchangedThenRetry` via fault proxy) |
+| Interrupted download with real KDBX ciphertext on XC and Android | closed for protocol path (Android AES-KDF truncate+reject-before-forward; XC opaque `truncatedDownloadFailsClosedThenRetry` via fault proxy) |
+| Second client detects an active lease held by the first | **closed** locally (Android↔Go + XC `secondClientSeesBusyLease`; Desktop GUI holds lease → second acquire HTTP 423 — `.local-desktop-xvfb-gui-edit-save-run.txt`) |
+| Offline edit on Android only, then reconnect | closed for protocol path (`KdbxOfflineReconnectLiveIntegrationTest` — `.local-offline-reconnect-run.txt`) |
+| Offline edit on desktop only, then reconnect | closed for protocol path (`testcoordinatedrecoverystore` live — `.local-offline-reconnect-xc-run.txt`) |
+| Two independent offline edits, reconnect in either order | closed for protocol path (`KdbxDualOfflineReconnectLiveIntegrationTest` — `.local-dual-offline-run.txt`) |
+| Simultaneous publish attempts with real KDBX | **closed** locally (Android↔Go same-base race; XC busy-second; Desktop GUI dual-writer 423) |
+| Crash during save + recovery reopen on the same client | **closed** locally (protocol/cli + Desktop Xvfb GUI + Android AVD UI — `.local-crash-recovery-run.txt`, `.local-desktop-xvfb-gui-crash-reopen-run.txt`, `.local-android-gui-reopen-run.txt`) |
+| Re-open every produced KDBX in **both** KeePassXC and KeySafe | **closed** locally (cli + Desktop Xvfb + Android AVD UI; `.local-cross-open-reopen-run.txt`, `.local-android-gui-reopen-run.txt`) |
+| Conflict-free lossless merge writer (dual-entry) | closed for AES-KDF JVM + XC-cli and native Argon2 emulator + XC-cli; gate authorizes attested conflict-free reports |
+| Assembled ciphertext round-trip under AES-KDF (JVM) | proven (`KdbxAssembledCiphertextWriterTest`) |
 | Assembled ciphertext round-trip under native Argon2 / forced-native AES | closed locally (OnePlus 13R `KdbxAssembledCiphertextArgon2InstrumentedTest` PASS) |
 
 ## Desktop checkout for interop

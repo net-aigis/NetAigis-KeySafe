@@ -61,6 +61,9 @@ androidx-credentials = { group = "androidx.credentials", name = "credentials", v
 bouncycastle-pkix = { group = "org.bouncycastle", name = "bcpkix-jdk18on", version.ref = "bouncycastle" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "android-test" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "android-test" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "android-test" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version = "2.3.0" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 

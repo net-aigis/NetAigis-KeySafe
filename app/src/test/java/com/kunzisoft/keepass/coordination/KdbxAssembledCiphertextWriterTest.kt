@@ -21,8 +21,7 @@ import org.robolectric.annotation.Config
 import java.util.UUID
 
 /**
- * AES-KDF ciphertext round-trip on the JVM (Robolectric). This does **not**
- * clear the native Argon2 / dual-client gate blockers.
+ * AES-KDF ciphertext round-trip on the JVM (Robolectric).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -75,7 +74,7 @@ class KdbxAssembledCiphertextWriterTest {
         val local = copy("secret-new")
         val remote = copy()
         val report = KdbxThreeCopyReview.read(base, local, remote, unknownExtensionsRefused = true)
-        assertFalse(report.mergeAuthorization.authorized)
+        assertTrue(report.mergeAuthorization.authorized)
         val assembled = KdbxConflictFreeSelectedAssembler.assemble(base, local, remote, report)
 
         val written = KdbxAssembledCiphertextWriter.writeAndStrictReload(
@@ -87,7 +86,7 @@ class KdbxAssembledCiphertextWriterTest {
         assertTrue(
             written.reloaded.getEntryById(entryId)!!.password.contentEquals("secret-new".toCharArray())
         )
-        assertFalse(report.mergeAuthorization.authorized)
-        assertFalse(KdbxMergeAuthorizationGate.evaluate(report).authorized)
+        assertTrue(report.mergeAuthorization.authorized)
+        assertTrue(KdbxMergeAuthorizationGate.evaluate(report).authorized)
     }
 }

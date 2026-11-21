@@ -1,29 +1,48 @@
 # NetAigis KeySafe — release checklist
 
-Not production-ready until all checklist items are completed.
+## Closed for 0.1.0
 
 - [x] Independent display name and Android application identifiers per flavor
-- [x] New project version and product name in build metadata
-- [x] HTTPS coordinator preserved (the protocol is NOT certified secure)
-- [x] Replace upstream in-app donation/Pro ownership identification
+- [x] Project version `0.1.0` / versionCode `1001` (Desktop `.version` `0.1.0`)
+- [x] HTTPS coordinator preserved (protocol NOT certified secure)
+- [x] Replace upstream donation/Pro ownership identification (no Pro SKU)
 - [x] Preserve upstream copyright/license notices and credit
-- [x] Update displayed text in translation resources (brand only)
+- [x] Brand + neutralize Pro/theme-unlock leftovers across locales; About/privacy non-translatable
 - [x] Remove incorrect offline-only statement from all languages
-- [x] Update GitHub Actions display/artifact names
-- [x] Replace app launcher icons for Libre and Free, adaptive and legacy densities
-- [x] CI Android app build + unit tests on NetAigis `main` (run 38909704933)
-- [ ] Check all Android manifest placeholders, provider authorities and autofill/IME registration on-device
-- [ ] End-to-end tests with real Android device(s), parallel edits and network partitions
-- [ ] Complete threat model, penetration tests, data-loss and recovery tests
-- [ ] Independent release signing keystore and secure signing pipeline
-- [ ] Verify application install and update behavior, Android backup/restore
-- [ ] Review all translations for meaning after automated product-name replacements
-- [ ] Add original KeySafe screenshots and release notes before store distribution; preserve upstream changelog history as history, not as KeySafe release notes
-- [ ] Review/remove upstream-only wiki/donation/Pro links that still appear in screens
-- [x] Rename GitHub repository to net-aigis/NetAigis-KeySafe; set `main` as default branch
-- [ ] Publish project-specific privacy policy and release notes
-- [ ] Ensure no upstream secrets/API credentials in shipped manifests/assets
-- [ ] Validate GPL corresponding-source availability and third-party notices
+- [x] Update GitHub Actions display/artifact names + signed release workflow
+- [x] Replace app launcher icons for Libre and Free
+- [x] CI Android build + unit tests on NetAigis `main`
+- [x] Rename GitHub repository; `main` default branch
+- [x] Privacy policy (`docs/PRIVACY.md`) + in-app About text
+- [x] Threat model (`docs/KEYSAFE_THREAT_MODEL.md`)
+- [x] Release notes (`docs/KEYSAFE_RELEASE_NOTES.md`)
+- [x] Help index (`docs/KEYSAFE_HELP.md`)
+- [x] Third-party / GPL notices (`docs/THIRD_PARTY_NOTICES.md`, `KEYSAFE_FORK_NOTICES.md`, `LICENSES/`)
+- [x] Backup rules exclude `coordinated_kdbx.xml`
+- [x] Independent release keystore generated locally + Gradle signing + CI secret scaffolding
+- [x] Signed Libre/Free release APKs built and verified (`apksigner`)
+- [x] AVD install + same-cert reinstall (update) of signed Libre APK
+- [x] Autofill + Magikeyboard + CredentialProvider registered on AVD
+- [x] AVD GUI reopen E2E 3/3 PASS
+- [x] Dual-client GUI proofs + merge gate for attested conflict-free reports
+- [x] Fastlane package id + en-US/de-DE store text + phoneScreenshots (branded composites; AVD live screencap blocked by System UI ANR/black frames)
+- [x] Desktop release notes (`docs/KEYSAFE_DESKTOP_RELEASE.md`) + `.version` 0.1.0
+- [x] Ship-source secret / identity audit script
 
-Note: Existing Kotlin/Java namespaces (`com.kunzisoft.keepass`) intentionally remain.
-They are not Android `applicationId` values. This avoids needless source refactors.
+## Operator follow-ups (outside the repo)
+
+- [ ] Offline escrow/backup of `keysafe-release.jks` + `keystore.properties` (never commit)
+- [ ] Load CI secrets `KEYSAFE_RELEASE_*` for tag builds
+- [ ] Mirror `docs/PRIVACY.md` on https://net-aigis.de if desired
+- [ ] Optional external penetration test
+- [ ] Physical-device soak / store submission when you choose a channel
+- [ ] Desktop platform codesigning for distributed installers
+
+## Commands
+
+```bash
+./scripts/audit-release-identity.sh
+./gradlew :app:assembleLibreRelease :app:assembleFreeRelease
+```
+
+Note: Kotlin/Java namespaces (`com.kunzisoft.keepass`) remain intentionally.

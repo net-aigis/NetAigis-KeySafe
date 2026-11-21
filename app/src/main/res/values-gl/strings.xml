@@ -581,7 +581,7 @@
     <string name="enable_auto_save_database_summary">Gardar a base de datos após unha acción importante (en modo \"Modificábel\")</string>
     <string name="enable_keep_screen_on_summary">Manter a pantalla acendida ao ver ou editar unha entrada</string>
     <string name="enable_screenshot_mode_title">Modo captura de pantalla</string>
-    <string name="html_text_buy_pro">Ao mercar a versión pro, terá acceso ao &lt;strong&gt;estilo visual&lt;/strong&gt; e axudará especialmente a &lt;strong&gt; realizar proxectos comunitarios.&lt;/strong&gt;</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
     <string name="html_text_dev_feature_contibute">Ao &lt;strong&gt;contribuír&lt;/strong&gt;,</string>
     <string name="unit_kibibyte">KiB</string>
     <string name="download_complete">Completado!</string>
@@ -602,8 +602,8 @@
     <string name="hide_expired_entries_summary">Entradas expiradas non son mostradas</string>
     <string name="education_donation_title">Participa</string>
     <string name="education_donation_summary">Axude a aumentar a estabilidade, seguranza e número de funcionalidades.</string>
-    <string name="html_text_feature_generosity">Este &lt;strong&gt;estilo visual&lt;/strong&gt; está dispoñíbel grazas á súa xenerosidade.</string>
-    <string name="html_text_donation">Ao &lt;strong&gt;contribuír&lt;/strong&gt; ao proxecto &lt;i&gt;(mediante achegas económicas, código ou tradución)&lt;/i&gt;, axudarás a que siga vivo e prospere, e tamén poderás acceder ao procedemento de desbloqueo do &lt;strong&gt;tema&lt;/strong&gt;.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="download_attachment">Descarregar %1$s</string>
     <string name="download_initialization">A inicializar…</string>
     <string name="download_progression">En progreso: %1$d%%</string>
@@ -632,7 +632,7 @@
     <string name="download_canceled">Cancelado!</string>
     <string name="education_generate_password_summary">Xere un contrasinal forte a asociar coa súa entrada, defínao facilmente segundo os criterios do formulario e non esqueza tornalo seguro.</string>
     <string name="education_add_attachment_summary">Suba un anexo á súa entrada para gardar datos externos importantes.</string>
-    <string name="html_text_ad_free">Ao contrario de moitas aplicacións de xestión de contrasinais, esta aplicación &lt;strong&gt;non ten anuncios&lt;/strong&gt;, é &lt;strong&gt;un programa de software libre \"copyleft\"&lt;/strong&gt; e non recolle datos persoais para os seus servidores, sen importar a versión a usar.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="education_entry_edit_summary">Edite a entrada cos campos personalizados. Os conxuntos de datos poden ser referenciados en entradas diferentes.</string>
     <string name="consider_chars_filter">Considerar caracteres</string>
     <string name="icon_section_custom">Personalizado</string>

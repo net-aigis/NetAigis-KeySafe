@@ -1,0 +1,7 @@
+NetAigis KeySafe 0.1.0
+
+• Erste NetAigis-KeySafe-Release-Linie (unabhängig von KeePassDX-Store-Einträgen)
+• Optionale HTTPS-koordinierte KDBX-Synchronisation mit Lease und Offline-Recovery
+• Konfliktfreier Merge-Gate nach Dual-Client-Nachweisen
+• Kein separates Pro-Unlock
+• Siehe docs/KEYSAFE_RELEASE_NOTES.md und docs/PRIVACY.md

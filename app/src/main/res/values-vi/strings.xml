@@ -597,10 +597,10 @@
     <string name="education_sort_summary">Chọn cách sắp xếp các mục và nhóm.</string>
     <string name="education_donation_title">Tham gia</string>
     <string name="education_donation_summary">Giúp tăng tính ổn định, bảo mật và bổ sung thêm nhiều tính năng hơn.</string>
-    <string name="html_text_ad_free">Không giống như nhiều ứng dụng quản lý mật khẩu, ứng dụng này &lt;strong&gt;không có quảng cáo&lt;/strong&gt;, &lt;strong&gt;phần mềm tự do được sao chép&lt;/strong&gt; và không thu thập dữ liệu cá nhân trên máy chủ của nó, bất kể bạn sử dụng phiên bản nào.</string>
-    <string name="html_text_buy_pro">Bằng cách mua phiên bản chuyên nghiệp, bạn sẽ có quyền truy cập vào &lt;strong&gt;phong cách trực quan&lt;/strong&gt; và bạn sẽ đặc biệt giúp &lt;strong&gt;thực hiện các dự án cộng đồng.&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">&lt;strong&gt;phong cách trực quan&lt;/strong&gt; có sẵn nhờ vào sự hào phóng của bạn.</string>
-    <string name="html_text_donation">Để &lt;strong&gt;đóng góp&lt;/strong&gt; cho dự án &lt;i&gt;( về mặt tài chính, mã nguồn, phiên dịch)&lt;/i&gt;, bạn sẽ giúp nó tiếp tục phát triển lớn mạnh, và bạn cũng sẽ được tiếp cận quy trình mở khóa &lt;strong&gt;các giao diện&lt;/strong&gt;.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="html_text_dev_feature">Tính năng này &lt;strong&gt;đang được phát triển&lt;/strong&gt; và yêu cầu &lt;strong&gt;sự đóng góp của bạn&lt;/strong&gt; để sớm được khả dụng.</string>
     <string name="html_text_dev_feature_buy_pro">Bằng cách mua phiên bản &lt;strong&gt;pro&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature_contibute">Bằng cách &lt;strong&gt;đóng góp&lt;/strong&gt;,</string>

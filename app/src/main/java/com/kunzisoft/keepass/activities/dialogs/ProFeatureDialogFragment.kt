@@ -26,40 +26,36 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import androidx.fragment.app.DialogFragment
-import com.kunzisoft.keepass.BuildConfig
 import com.kunzisoft.keepass.R
 import com.kunzisoft.keepass.utils.UriUtil.openUrl
 
 /**
- * Custom Dialog that asks the user to download the pro version or make a donation.
+ * Legacy upstream "Pro feature" entry point. KeySafe has no Pro SKU; the dialog
+ * only points at project contribution / source channels.
  */
 class ProFeatureDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity?.let { activity ->
-            // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(activity)
-
             val stringBuilder = SpannableStringBuilder()
-            if (BuildConfig.CLOSED_STORE) {
-                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_ad_free), FROM_HTML_MODE_LEGACY)).append("\n\n")
-                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_buy_pro), FROM_HTML_MODE_LEGACY))
-                builder.setPositiveButton(R.string.download) { _, _ ->
-                    activity.openUrl(
-                        activity.getString(R.string.play_store_url,
-                            activity.getString(R.string.keepro_app_id))
-                    )
-                }
-            } else {
-                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_feature_generosity), FROM_HTML_MODE_LEGACY)).append("\n\n")
-                stringBuilder.append(HtmlCompat.fromHtml(getString(R.string.html_text_donation), FROM_HTML_MODE_LEGACY))
-                builder.setPositiveButton(R.string.contribute) { _, _ ->
-                    activity.openUrl(R.string.contribution_url)
-                }
-            }
+            stringBuilder.append(
+                HtmlCompat.fromHtml(
+                    getString(R.string.html_text_keysafe_participate),
+                    FROM_HTML_MODE_LEGACY
+                )
+            ).append("\n\n")
+            stringBuilder.append(
+                HtmlCompat.fromHtml(
+                    getString(R.string.html_about_contribution),
+                    FROM_HTML_MODE_LEGACY
+                )
+            )
             builder.setMessage(stringBuilder)
+            builder.setPositiveButton(R.string.contribute) { _, _ ->
+                activity.openUrl(R.string.contribution_url)
+            }
             builder.setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
-            // Create the AlertDialog object and return it
             return builder.create()
         }
         return super.onCreateDialog(savedInstanceState)

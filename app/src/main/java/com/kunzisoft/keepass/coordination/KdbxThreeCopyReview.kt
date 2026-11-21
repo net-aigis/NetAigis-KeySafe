@@ -40,8 +40,9 @@ internal object KdbxThreeCopyReview {
          */
         val unknownExtensionsRefused: Boolean = false,
         /**
-         * Always unauthorized while standing integrity blockers remain.
-         * Callers must not treat a conflict-free [decisions] list as publishable.
+         * Gate decision for this report. Conflict-free [decisions] alone are not
+         * publishable without attested refuseUnknownExtensions and empty standing
+         * dual-client blockers.
          */
         val mergeAuthorization: KdbxMergeAuthorizationGate.Decision =
             KdbxMergeAuthorizationGate.evaluate(null)
@@ -167,7 +168,7 @@ internal object KdbxThreeCopyReview {
             appendOrder = appendOrder,
             unknownExtensionsRefused = unknownExtensionsRefused
         )
-        return draft.copy(mergeAuthorization = KdbxMergeAuthorizationGate.requireDenied(draft))
+        return draft.copy(mergeAuthorization = KdbxMergeAuthorizationGate.evaluate(draft))
     }
 
     /**

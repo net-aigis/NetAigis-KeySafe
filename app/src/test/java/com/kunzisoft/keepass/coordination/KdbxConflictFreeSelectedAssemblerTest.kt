@@ -69,13 +69,13 @@ class KdbxConflictFreeSelectedAssemblerTest {
         val report = review(base, local, remote)
         assertEquals(KdbxThreeCopyReview.Source.LOCAL,
             report.decisions.single { it.id == entryId.toString() }.source)
-        assertFalse(report.mergeAuthorization.authorized)
+        assertTrue(report.mergeAuthorization.authorized)
 
         val assembled = KdbxConflictFreeSelectedAssembler.assemble(base, local, remote, report)
         val entry = assembled.getEntryById(entryId)
         assertNotNull(entry)
         assertTrue(entry!!.password.contentEquals("secret-new".toCharArray()))
-        assertFalse(report.mergeAuthorization.authorized)
+        assertTrue(report.mergeAuthorization.authorized)
     }
 
     @Test

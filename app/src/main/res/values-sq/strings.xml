@@ -602,15 +602,15 @@
     <string name="education_new_node_summary">Zërat ju ndihmojnë të administroni identitetet tuaj dixhitalë.\n\nGrupet (~dosjet) sistemojnë zërat në bazën tuaj të të dhënave.</string>
     <string name="education_validate_entry_summary">Mos harroni të vlerësoni zërin tuaj dhe të ruani bazën tuaj të të dhënave.\n\nNëse është aktivizuar kyçje e automatizuar dhe harroni se po bënit një ndryshim, rrezikoni të humbni të dhënat tuaja.</string>
     <string name="education_unlock_summary">Që të shkyçet baza juaj e të dhënave, jepni fjalëkalimin dhe/ose kartelë kyç.\n\nKopjeruajeni kartelën e bazës suaj të të dhënave në një vend të sigurt, pas çdo ndryshimi.</string>
-    <string name="html_text_feature_generosity">Ky &lt;strong&gt;stil pamor&lt;/strong&gt; është i passhëm falë bujarisë tuaj.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="html_text_dev_feature">Kjo veçori është &lt;strong&gt;duke u zhvilluar&lt;/strong&gt; dhe lyp &lt;strong&gt;kontributin&lt;/strong&gt; tuaj që të jetë gati së shpejti.</string>
     <string name="education_generate_password_summary">Prodhoni një fjalëkalim të fuqishëm, për t’ia përshoqëruar zërit tuaj, përcaktojeni kollaj, sipas kritereve të formularit dhe mos harroni të siguroni fjalëkalimin.</string>
     <string name="delete_entered_password_summary">Fshin fjalëkalimin e dhënë, pas një përpjekje për lidhje te një bazë të dhënash</string>
     <string name="education_lock_summary">Kyçeni shpejt e shpejt bazën tuaj të të dhënave, mund ta ujdisni aplikacionin ta mbyllë pas një farë kohe dhe kur fiket ekrani.</string>
     <string name="education_field_copy_summary">Ç’kopjohet te fusha, mund të ngjitet kudo.\n\nPërdorni metodën mbushje formularësh, nëse parapëlqeni.</string>
     <string name="education_donation_summary">Ndihmoni të shtohet qëndrueshmëria, siguria dhe në shtimin e më tepër veçorive.</string>
-    <string name="html_text_ad_free">Ndryshe nga shumë aplikacione administrimi fjalëkalimesh, ky është &lt;strong&gt;pa reklama&lt;/strong&gt;, &lt;strong&gt;<em>software</em> i lirë në <em>copylef</em>&lt;/strong&gt; dhe s’grumbullon të dhëna personale në shërbyesit e tij, pavarësisht versionit që përdorni.</string>
-    <string name="html_text_buy_pro">Duke blerë versionin Pro, do të mund të përdorni këtë &lt;strong&gt;stil pamor&lt;/strong&gt; dhe do të ndihmoni veçanërisht në &lt;strong&gt;realizimin e projekteve të bashkësisë.&lt;/strong&gt;</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
     <string name="error_arc4">S’mbulohet shifër “Arcfour stream”.</string>
     <string name="warning_file_too_big">Një bazë të dhënash KeePass supozohet se përmban vetëm kartela të vockla mjetesh (b.f., kartela kyçesh PGP).\n\nMe këtë ngarkim baza juaj e të dhënave mund të bëhet shumë e madhe dhe të ulet funksionimi i saj.</string>
     <string name="education_read_only_summary">Ndryshoni mënyrë hapjeje për këtë sesion. \n \n“Mbrojtur nga shkimi” parandalon ndryshime të paqëllimta te baza e të dhënave. \n“E ndryshueshme” ju lejon të shtoni, fshini ose ndryshoni krejt elementët, sipas dëshirës.</string>
@@ -633,7 +633,7 @@
     <string name="autofill_block_restart">Rinisni aplikacionin që përmban formularin, që të aktivizohet bllokimi.</string>
     <string name="enable_education_screens_summary">Thekso elementë për të mësuar se si funksionon aplikacioni</string>
     <string name="reset_education_screens_summary">Shfaq sërish krejt informacionin edukativ</string>
-    <string name="html_text_donation">Duke &lt;strong&gt;dhënë ndihmesë&lt;/strong&gt; te projekti &lt;i&gt;(financiarisht, kod, përkthim)&lt;/i&gt;, do ta ndihmoni të vazhdojë të jetojë dhe të lulëzojë dhe do të mund të përfitoni shkyçje &lt;strong&gt;teme&lt;/strong&gt;.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="show_entry_colors_summary">Bën shfaqje ngjyrash të përparme dhe të pasme për një zë</string>
     <string name="settings_database_force_changing_master_key_summary">Kërko doemos ndryshimin e kyçit të përgjithshëm (ditë)</string>
     <string name="autofill_inline_suggestions_summary">Provo të shfaqësh sugjerime vetëplotësimi drejt e nga një tastierë e përputhshme</string>

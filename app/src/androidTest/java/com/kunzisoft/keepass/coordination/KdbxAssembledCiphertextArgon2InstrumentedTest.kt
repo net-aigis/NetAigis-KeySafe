@@ -76,7 +76,7 @@ class KdbxAssembledCiphertextArgon2InstrumentedTest {
             val local = copy("argon2-secret")
             val remote = copy("unchanged")
             val report = KdbxThreeCopyReview.read(base, local, remote, unknownExtensionsRefused = true)
-            assertFalse(report.mergeAuthorization.authorized)
+            assertTrue(report.mergeAuthorization.authorized)
             val assembled = KdbxConflictFreeSelectedAssembler.assemble(base, local, remote, report)
             val written = KdbxAssembledCiphertextWriter.writeAndStrictReload(
                 assembled = assembled,
@@ -88,7 +88,7 @@ class KdbxAssembledCiphertextArgon2InstrumentedTest {
                 written.reloaded.getEntryById(entryId)!!.password
                     .contentEquals("argon2-secret".toCharArray())
             )
-            assertFalse(KdbxMergeAuthorizationGate.evaluate(report).authorized)
+            assertTrue(KdbxMergeAuthorizationGate.evaluate(report).authorized)
         } finally {
             cache.deleteRecursively()
         }

@@ -586,10 +586,10 @@
     <string name="education_sort_summary">Выберыце, як сартаваць запісы і групы.</string>
     <string name="education_donation_title">Удзельнічаць</string>
     <string name="education_donation_summary">Дапамажыце павысіць стабільнасць, бяспеку і дадаць больш функцый.</string>
-    <string name="html_text_ad_free">У адрозненне ад многіх праграм для кіравання паролямі, гэтая &lt;strong&gt;без рэкламы&lt;/strong&gt;, &lt;strong&gt;копілефтнае свабоднае праграмнае забеспячэнне&lt;/strong&gt; і не збірае персанальныя дадзеныя на сваіх серверах, незалежна ад версіі, якой вы карыстаецеся.</string>
-    <string name="html_text_buy_pro">Купляючы pro-версію, вы атрымаеце доступ да гэтага &lt;strong&gt;візуальнага стылю&lt;/strong&gt; і асабліва дапаможаце &lt;strong&gt;рэалізацыі грамадскіх праектаў.&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">Гэты &lt;strong&gt;візуальны стыль&lt;/strong&gt; даступны дзякуючы вашай шчодрасці.</string>
-    <string name="html_text_donation">&lt;strong&gt;Унёсшы ўклад&lt;/strong&gt; у праект &lt;i&gt;(матэрыяльна, кодам, перакладам)&lt;/i&gt;, вы дапаможаце яму працягваць жыць і развівацца, а таксама будзеце мець права на працэдуру разблакіроўкі &lt;strong&gt;тэмы&lt;/strong&gt;.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="html_text_dev_feature">Гэтая функцыя &lt;strong&gt;знаходзіцца ў стадыі распрацоўкі&lt;/strong&gt; і патрабуе вашага &lt;strong&gt;ўкладу&lt;/strong&gt;, каб неўзабаве стаць даступнай.</string>
     <string name="html_text_dev_feature_buy_pro">Купляючы &lt;strong&gt;pro-версію&lt;/strong&gt;,</string>
     <string name="html_text_dev_feature_contibute">&lt;strong&gt;Унёсшы ўклад&lt;/strong&gt;,</string>

@@ -40,7 +40,7 @@ class KdbxGatedMergePipelineTest {
         val outcome = KdbxGatedMergePipeline.Outcome(
             published = false,
             blockers = listOf(
-                "no validated lossless KDBX merge writer under native Argon2 / dual-client reopen"
+                "KDBX copies were not attested as loaded with refuseUnknownExtensions"
             ),
             confirmedRevision = null,
             report = null

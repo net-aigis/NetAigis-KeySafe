@@ -374,7 +374,7 @@
     <string name="other">אחר</string>
     <string name="education_sort_title">מיון פריטים</string>
     <string name="education_sort_summary">בחר כיצד רשומות וקבוצות ממוינות.</string>
-    <string name="html_text_ad_free">שלא כמו יישומי ניהול סיסמאות רבים, היישום הזה הוא &lt;strong&gt;נטול פרסומות&lt;/strong&gt;, &lt;strong&gt;תוכנה חופשית עם רישיון לא מגביל&lt;/strong&gt; ואינו אוסף מידע פרטי בשרתים שלו, לא משנה באיזו גרסה אתה משתמש.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="enable">הפעל</string>
     <string name="compression_gzip">Gzip</string>
     <string name="enable_auto_save_database_title">שמירה אוטומטית של מסד הנתונים</string>
@@ -621,7 +621,7 @@
     <string name="export_app_properties_title">ייצוא הגדרות יישום</string>
     <string name="export_app_properties_summary">צור קובץ כדי לייצא הגדרות יישום</string>
     <string name="error_export_app_properties">שגיאה במהלך ייצוא הגדרות יישום.</string>
-    <string name="html_text_feature_generosity">&lt;strong&gt;הסגנון החזותי&lt;/strong&gt; הזה זמין הודות לנדיבות שלך.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="html_text_dev_feature_contibute">על ידי &lt;strong&gt;תרומה&lt;/strong&gt;,</string>
     <string name="hide_templates_title">הסתר תבניות</string>
     <string name="html_text_dev_feature_encourage">אתה מעודד מפתחים ליצור &lt;strong&gt;תכונות חדשות&lt;/strong&gt; ול&lt;strong&gt;תקן באגים&lt;/strong&gt; לפי דבריך.</string>
@@ -635,7 +635,7 @@
     <string name="recursive_number_entries_summary">מחשב באופן רקורסיבי את מספר הרשומות בקבוצה</string>
     <string name="autofill_manual_selection_summary">הצג אפשרות לאפשר למשתמש לבחור ערך מסד נתונים</string>
     <string name="education_read_only_title">הגן על מסד הנתונים שלך מפני כתיבה</string>
-    <string name="html_text_donation">על ידי &lt;strong&gt;תרומה&lt;/strong&gt; לפרויקט &lt;i&gt;(כספית, קוד, תרגום)&lt;/i&gt;, אתה תעזור לו להמשיך לחיות ולשגשג, ואתה גם תהיה זכאי להליך פתיחת &lt;strong&gt;ערכת נושא&lt;/strong&gt;.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="warning_empty_password">להמשיך ללא הגנת ביטול נעילה באמצעות סיסמה?</string>
     <string name="warning_file_too_big">מסד נתונים של KeePass אמור להכיל רק קבצי שירות קטנים (כגון קבצי מפתח PGP).\n\nמסד הנתונים שלך עשוי להפוך לגדול מאד ולהפחית ביצועים עם העלאה זו.</string>
     <string name="warning_exact_alarm">לא אפשרת ליישום להשתמש בהתראה מדויקת. כתוצאה מכך, התכונות שדורשות קוצב זמן לא יתבצעו עם זמן מדויק.</string>
@@ -668,7 +668,7 @@
     <string name="education_validate_entry_summary">זכור לאמת את הרשומה שלך ולשמור את מסד הנתונים שלך.\n\nאם נעילה אוטומטית מופעלת ואתה שוכח שעשית שינוי, אתה מסתכן באיבוד הנתונים שלך.</string>
     <string name="education_entry_new_field_summary">רשום שדה נוסף, הוסף ערך והגן עליו באופן אופציונלי.</string>
     <string name="education_setup_OTP_summary">הגדרת ניהול סיסמה חד־פעמית (HOTP / TOTP) כדי לייצר אסימון המבוקש עבור אימות דו־גורמי (2FA).</string>
-    <string name="html_text_buy_pro">על ידי קניית גרסת הפרו, תהיה לך גישה ל&lt;strong&gt;סגנון החזותי&lt;/strong&gt; הזה ותעזור במיוחד עם &lt;strong&gt;ההגשמה של פרויקטים קהילתיים.&lt;/strong&gt;</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
     <string name="html_text_dev_feature_buy_pro">על ידי קניית גרסת ה&lt;strong&gt;פרו&lt;/strong&gt;,</string>
     <string name="error_otp_secret_length">מפתח סודי חייב להיות לפחות %1$d תווים.</string>
     <string name="entry_application_id">מזהה אפליקציה</string>

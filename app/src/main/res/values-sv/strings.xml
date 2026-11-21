@@ -236,10 +236,10 @@
     <string name="education_sort_summary">Välj hur poster och grupper sorteras.</string>
     <string name="education_donation_title">Delta</string>
     <string name="education_donation_summary">Bidra till ökad stabilitet och säkerhet och till fler funktioner.</string>
-    <string name="html_text_ad_free">Till skillnad från många andra lösenordshanterare är den här appen &lt;strong&gt;reklamfri&lt;/strong&gt;, &lt;strong&gt;fri programvara med copyleft&lt;/strong&gt; och samlar inte in några personuppgifter, oavsett vilken version du använder.</string>
-    <string name="html_text_buy_pro">Genom att köpa Pro-versionen får du tillgång till den här &lt;strong&gt;visuella stilen&lt;/strong&gt; och bidrar särskilt till &lt;strong&gt;projekt som drivs av gemenskapen.&lt;/strong&gt;</string>
-    <string name="html_text_feature_generosity">Den här &lt;strong&gt;visuella stilen&lt;/strong&gt; är tillgänglig tack vare din generositet.</string>
-    <string name="html_text_donation">Genom att &lt;strong&gt;bidra&lt;/strong&gt; till projektet &lt;i&gt;(ekonomiskt, med kod eller genom översättning)&lt;/i&gt; hjälper du det att fortsätta leva och utvecklas och får också möjlighet att låsa upp &lt;strong&gt;temat&lt;/strong&gt;.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="html_text_dev_feature">Den här funktionen är under &lt;strong&gt;utveckling&lt;/strong&gt; och behöver ditt &lt;strong&gt;bidrag&lt;/strong&gt; för att kunna lanseras snart.</string>
     <string name="html_text_dev_feature_buy_pro">Genom att köpa &lt;strong&gt;pro&lt;/strong&gt;-versionen,</string>
     <string name="html_text_dev_feature_contibute">Genom att &lt;strong&gt;bidra&lt;/strong&gt;,</string>

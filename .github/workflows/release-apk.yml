@@ -1,0 +1,59 @@
+name: NetAigis KeySafe - Signed release APK
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v0.*'
+      - 'v1.*'
+
+permissions:
+  contents: read
+
+jobs:
+  release-apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: ''
+      - name: Install Android platform
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Decode release keystore when secrets are present
+        env:
+          KEYSAFE_RELEASE_STORE_FILE_B64: ${{ secrets.KEYSAFE_RELEASE_STORE_FILE_B64 }}
+          KEYSAFE_RELEASE_STORE_PASSWORD: ${{ secrets.KEYSAFE_RELEASE_STORE_PASSWORD }}
+          KEYSAFE_RELEASE_KEY_ALIAS: ${{ secrets.KEYSAFE_RELEASE_KEY_ALIAS }}
+          KEYSAFE_RELEASE_KEY_PASSWORD: ${{ secrets.KEYSAFE_RELEASE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KEYSAFE_RELEASE_STORE_FILE_B64:-}" ]; then
+            echo "No KEYSAFE_RELEASE_STORE_FILE_B64 secret — building unsigned release"
+            exit 0
+          fi
+          echo "$KEYSAFE_RELEASE_STORE_FILE_B64" | base64 -d > keysafe-release.jks
+          printf '%s\n' \
+            "storeFile=keysafe-release.jks" \
+            "storePassword=${KEYSAFE_RELEASE_STORE_PASSWORD}" \
+            "keyAlias=${KEYSAFE_RELEASE_KEY_ALIAS}" \
+            "keyPassword=${KEYSAFE_RELEASE_KEY_PASSWORD}" \
+            > keystore.properties
+          chmod 600 keysafe-release.jks keystore.properties
+      - name: Assemble Libre release
+        run: |
+          chmod +x ./gradlew
+          ./gradlew --no-daemon --stacktrace :app:assembleLibreRelease
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: keysafe-libre-release
+          path: app/build/outputs/apk/libre/release/*.apk
+      - name: Scrub keystore from runner
+        if: always()
+        run: rm -f keysafe-release.jks keystore.properties

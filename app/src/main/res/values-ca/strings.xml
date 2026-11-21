@@ -301,7 +301,7 @@
     <string name="content_description_credentials_information">Informació de credencials</string>
     <string name="content_description_add_item">Afegeix un element</string>
     <string name="education_lock_title">Bloca la base de dades</string>
-    <string name="html_text_feature_generosity">Aquest &lt;strong&gt;estil visual&lt;/strong&gt; és disponible gràcies a la vostra generositat.</string>
+    <string name="html_text_feature_generosity">Bundled visual styles in this KeySafe build do not require a paid unlock.</string>
     <string name="html_text_dev_feature_upgrade">No us oblideu de mantenir l’aplicació actualitzada instal·lant les versions noves.</string>
     <string name="icon_section_standard">Estàndard</string>
     <string name="show_uuid_title">Mostra l\'UUID</string>
@@ -641,13 +641,13 @@
     <string name="education_unlock_title">Desbloqueja la base de dades</string>
     <string name="education_setup_OTP_summary">Configureu la gestió de contrasenyes d\'un sol ús (HOTP / TOTP) per generar un testimoni sol·licitat per a l\'autenticació de dos factors (2FA).</string>
     <string name="education_field_copy_title">Copia un camp</string>
-    <string name="html_text_donation">Al &lt;strong&gt;contribuir&lt;/strong&gt; al projecte &lt;i&gt;(monetàriament, codi, traducció)&lt;/i&gt;, l\'ajudareu a continuar vivint i prosperant, i també podreu optar al procediment de desbloqueig del &lt;strong&gt;tema&lt;/strong&gt;.</string>
+    <string name="html_text_donation">NetAigis KeySafe has no separate Pro unlock tier. Contributions help maintain this independent fork.</string>
     <string name="upload_attachment">Puja %1$s</string>
     <string name="download_finalization">S\'està finalitzant…</string>
     <string name="entropy">Entropia: %1$s bit</string>
     <string name="warning_exact_alarm">No heu permès que l\'aplicació utilitzi una alarma exacta. Com a resultat, les característiques que requereixen un temporitzador no es faran amb un temps exacte.</string>
     <string name="warning_keyfile_integrity">El hash del fitxer no està garantit perquè Android pot canviar les seves dades al moment. Canvia l\'extensió del fitxer a .bin per a una integritat correcta.</string>
-    <string name="html_text_ad_free">A diferència de moltes aplicacions de gestió de contrasenyes, aquest un és un &lt;strong&gt;programari sense anuncis&lt;/strong&gt;, &lt;strong&gt; copyleft i lliure&lt;/strong&gt; i no recull dades personals en els seus servidors, no importa quina versió utilitzeu.</string>
+    <string name="html_text_ad_free">NetAigis KeySafe does not use a paid ad-free unlock tier.</string>
     <string name="education_field_copy_summary">Els camps copiats es poden enganxar en qualsevol lloc.\n\nUtilitza el mètode d\'emplenament de formularis que prefereixis.</string>
     <string name="generate_keyfile">Genera un fitxer de claus</string>
     <string name="nodes">Nodes</string>
@@ -661,7 +661,7 @@
     <string name="education_read_only_summary">Canvieu el mode inaugural per a la sessió. \n \n\"Escriu-emparat\" impedeix canvis involuntaris a la base de dades. \n\"Modificable\" us permet afegir, eliminar o modificar tots els elements com vulgueu.</string>
     <string name="warning_database_info_changed_options_read_only">Torna a carregar la base de dades amb els darrers canvis.</string>
     <string name="warning_database_notification_permission">El permís de notificació permet mostrar l\'estat de la base de dades i bloquejar-la amb un botó de fàcil accés.\n\nSi no activeu aquest permís, la base de dades oberta en segon pla no serà visible si hi ha una altra aplicació en primer pla.</string>
-    <string name="html_text_buy_pro">En comprar la versió pro, tindreu accés a aquest &lt;strong&gt; estil visual&lt;/strong&gt; i sereu ajundant especialment &lt;strong&gt; a la realització de projectes comunitaris.&lt;/strong&gt;</string>
+    <string name="html_text_buy_pro">NetAigis KeySafe does not sell a separate Pro application.</string>
     <string name="html_text_dev_feature">Aquesta característica és &lt;strong&gt;en desenvolupament&lt;/strong&gt; i requereix que la vostra &lt;strong&gt;contribució&lt;/strong&gt; estigui disponible aviat.</string>
     <string name="style_name_forest">Bosc</string>
     <string name="style_name_divine">Divina</string>

@@ -228,26 +228,25 @@ for synthetic unit inventories that only build parent/child links.
 Unknown XML/inner-header handling is covered later (phase 2O). No automatic
 merge, save or publication is enabled.
 
-## Explicit merge-authorization gate (phase 2N; still read-only)
+## Explicit merge-authorization gate (phase 2N)
 
-`KdbxMergeAuthorizationGate` records standing blockers that keep automatic
-merge/publish denied even when a three-copy review looks conflict-free:
+`KdbxMergeAuthorizationGate` authorizes automatic merge/publish only when
+blockers are empty. Dual-client GUI inventory
+(`KdbxDualClientProofStatus.incompleteProofs`) is cleared locally (Desktop
+Xvfb edit+save + dual-writer busy, crash reopen, Android UI reopen; see
+`KEYSAFE_DUAL_CLIENT_SCENARIOS.md`).
 
-- absence of a validated lossless merge writer under native Argon2 / dual-client reopen
-  (AES-KDF assemble→write→reload is unit- and live-protocol-covered)
-- incomplete KeePassXC/KeySafe dual-client crash/recovery proofs
+Still denied without:
 
-In addition, a report that does not attest
-`unknownExtensionsRefused` (phase 2O) keeps merge unauthorized.
-`KdbxThreeCopyReview.Report.mergeAuthorization` is always unauthorized while
-those conditions hold. Append-order previews and empty conflict lists never
-clear the gate. No automatic merge, save or publication is enabled.
+- attested `unknownExtensionsRefused` (phase 2O)
+- empty record conflict list
+- no append-order preview (analysis-only)
 
+`KdbxThreeCopyReview.Report.mergeAuthorization` follows `evaluate(report)`.
 Exclusive-lease revalidation of the merge target is wired into
-`KdbxGatedMergePublisher` (phase 3) and runs only on an authorized path; it
-does not by itself authorize publication.
+`KdbxGatedMergePublisher` (phase 3) and runs only on an authorized path.
 
-## Opt-in refuse of unknown KDBX extensions (phase 2O; still no auto-publish)
+## Opt-in refuse of unknown KDBX extensions (phase 2O)
 
 `DatabaseInputKDBX` accepts `setRefuseUnknownExtensions(true)`. In that mode:
 
@@ -260,23 +259,20 @@ does not by itself authorize publication.
 must use `KdbxCoordinationStrictLoad.openEncrypted` (always
 `REFUSE_UNKNOWN_EXTENSIONS`) and pass `unknownExtensionsRefused=true` into
 `KdbxThreeCopyReview.read`. Without that attestation the authorization gate
-still denies. No automatic merge, save or publication is enabled; lossless
-writer and dual-client proofs remain standing blockers.
+still denies.
 
-## Gated merge publisher with lease revalidation (phase 3; auto-publish off)
+## Gated merge publisher with lease revalidation (phase 3)
 
 `KdbxMergeLeaseRevalidator` re-downloads the coordinator file under a live
 exclusive lease and requires the content SHA-256 to still equal the expected
 base revision (or both sides empty for revision `0`).
 
 `KdbxGatedMergePublisher.attempt` retains the caller-supplied base/local/remote
-ciphertexts, evaluates `KdbxMergeAuthorizationGate`, and **never** invokes the
-publish callback while unauthorized. When authorization is someday granted it
-still revalidates the lease-bound revision before PUT. This is not yet a
-lossless plaintext merge writer; a validated merged ciphertext must be supplied
-separately. Automatic publication remains disabled.
+ciphertexts, evaluates `KdbxMergeAuthorizationGate`, and invokes the publish
+callback only when authorized and lease revalidation succeeds. A validated
+merged ciphertext must be supplied separately.
 
-## Conflict-free selected model assembly (phase 3B; still no auto-publish)
+## Conflict-free selected model assembly (phase 3B)
 
 `KdbxConflictFreeSelectedAssembler.assemble` builds an in-memory `DatabaseKDBX`
 from a conflict-free `KdbxThreeCopyReview` by cloning groups/entries/tombstones
@@ -286,43 +282,37 @@ from the winning side of each UUID decision. Preconditions (fail closed):
 - empty record and metadata conflict lists
 - no append-order preview
 - every metadata decision is `UNCHANGED`
-- merge authorization remains denied
 
-This does not call `DatabaseKDBXMerger`, does not clear standing gate blockers,
-and does not publish. Metadata edits and attachment/custom-icon reconstruction
-remain later slices.
+This does not call `DatabaseKDBXMerger` and does not publish by itself.
+Metadata edits and attachment/custom-icon reconstruction remain later slices.
 
-## Assembled ciphertext write and strict reload (phase 3C; auto-publish off)
+## Assembled ciphertext write and strict reload (phase 3C)
 
 `KdbxAssembledCiphertextWriter.writeAndStrictReload` serializes an assembled
 `DatabaseKDBX`, then reopens the bytes with `refuseUnknownExtensions=true` and
 re-runs `KdbxModelSnapshotReader`. Callers still must keep base/local/remote
-originals, run `KdbxGatedMergePublisher` (which remains unauthorized), and
-complete dual-client proofs before any automatic publication.
+originals and run `KdbxGatedMergePublisher` for publication.
 
 AES-KDF assemble→write→strict-reload is covered by JVM unit tests after
 `AESTransformer` falls back when `libaes` is absent. Native Argon2id assemble→
 write→reload has an instrumented DX harness
-(`KdbxAssembledCiphertextArgon2InstrumentedTest`); the default CI unit job does
-not run connected tests, so that evidence stays open until a device/emulator
-run is recorded. The standing gate blocker remains; auto-publish stays off.
+(`KdbxAssembledCiphertextArgon2InstrumentedTest`).
 
-## Gated merge pipeline (phase 3D; auto-publish off)
+## Gated merge pipeline (phase 3D)
 
 `KdbxGatedMergePipeline.attempt` composes strict load → three-copy review →
 conflict-free assemble → ciphertext write/reload → gated publisher. Empty or
-oversized inputs fail before crypto. The publisher still refuses every PUT
-while standing blockers remain. No automatic publication is enabled.
+oversized inputs fail before crypto. The publisher refuses every PUT while
+gate blockers remain; attested conflict-free reports authorize the path.
 
-## Dual-client interoperability checklist (phase 4; auto-publish off)
+## Dual-client interoperability checklist (phase 4)
 
-`KdbxDualClientProofStatus` lists the KeePassXC ↔ KeySafe ↔ coordinator
-scenarios that still deny merge authorization. Android↔Go loopback tests with
-dummy ciphertext (`KEYSAFE_INTEGRATION_TESTS.md`) do not clear that list.
-Track open items in `docs/KEYSAFE_DUAL_CLIENT_SCENARIOS.md`. No automatic
-merge, save or publication is enabled.
+`KdbxDualClientProofStatus.incompleteProofs` is empty after local Desktop
+Xvfb edit+save/dual-writer and Android UI reopen evidence. Track the closed
+inventory in `docs/KEYSAFE_DUAL_CLIENT_SCENARIOS.md`. Report-level
+attestations still gate authorization.
 
-## Transport TLS and token handling (phase 5; auto-publish off)
+## Transport TLS and token handling (phase 5)
 
 KeySafe coordinator HTTPS uses the platform trust store with TLS 1.2+ only
 (`CoordinatorTlsPolicy`). Cleartext is refused except for explicit loopback
@@ -331,5 +321,4 @@ AndroidKeyStore-wrapped SharedPreferences (`coordinated_kdbx`), excluded from
 backup/restore. KeePassXC enforces HTTPS (loopback HTTP exception), TLS 1.2+,
 peer verification without ignoring SSL errors, and keeps the bearer in encrypted
 KDBX custom data. Body size caps remain 64 MiB KDBX / 16 KiB control on clients;
-the Go loopback fixture rejects PUTs above the same 64 MiB ceiling. None of
-this clears standing merge-authorization blockers or enables auto-publish.
+the Go loopback fixture rejects PUTs above the same 64 MiB ceiling.

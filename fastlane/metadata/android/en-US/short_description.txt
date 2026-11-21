@@ -1,1 +1,1 @@
-KDBX password manager with optional HTTPS coordination.
+Independent KeePass KDBX password manager with optional HTTPS coordination.
