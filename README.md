@@ -17,8 +17,10 @@ Looking for **multi-user KeePassDX**, **KeePassXC shared databases**, or a way t
 share a **KeePass/KDBX password database on Android**? NetAigis KeySafe is a
 KeePassDX-based Android project developing access coordination for an encrypted
 `.kdbx` database across people and devices using a self-hosted HTTPS coordinator.
-Interoperability with KeePassXC is a project goal, **not a completed or verified
-cross-platform multi-user solution**.
+The matching desktop fork is **NetAigis KeySafe** as well
+(`NetAigis-KeySafe-Desktop`, app id `de.netaigis.keysafe.desktop`) — same
+product, Linux platform. Cross-platform multi-user coordination is **not** a
+completed or verified production solution.
 
 The coordinator manages access and revisions; it is not a server-side password
 vault like Vaultwarden. The password database remains in encrypted KDBX format.
@@ -39,7 +41,7 @@ for the exact implementation status; follow commits and
 - Android `applicationId`: `de.netaigis.keysafe`
 - Libre flavor: `de.netaigis.keysafe.libre`
 - Free flavor: `de.netaigis.keysafe.free`
-- Version: `0.1.0-dev` (independent of KeePassDX's version scheme)
+- Version: `0.1.0-dev` (same scheme as Desktop KeySafe; not 1.x until a real release)
 - Coordination protocol: retained from the NetAigis fork, subject to validation
 
 The original internal source namespaces (`com.kunzisoft.keepass`) are retained

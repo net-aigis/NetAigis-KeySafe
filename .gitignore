@@ -93,3 +93,7 @@ releases/*
 
 # Local scripts
 scripts/*
+
+# Local dual-client / agent artifacts (never commit)
+.local-*
+.gradle-agent-home/

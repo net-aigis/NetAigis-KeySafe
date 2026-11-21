@@ -44,9 +44,20 @@ All other Android unit tests and `:app:assembleLibreDebug` still run.
    currentRevision advances from empty to the tip hash, concurrent acquire
    yields exactly one winner, and after a failed renew `revisionForRecovery`
    still exposes the last tip while publish stays lost.
-   **Android↔Go live protocol phase is closed** for this matrix. KeePassXC
-   dual-client proofs and native Argon2 device runs remain open; auto-publish
-   stays denied.
+   **Android↔Go live protocol phase is closed** for this matrix. Native Argon2
+   on device is closed locally (OnePlus 13R). XC `KdbxCoordinatorClient` live
+   HTTP and the XC↔KeySafe tip bridges are closed locally (opaque + real
+   AES-KDF via `KdbxXcPublishedTipIntegrationTest`, podman QtTest; suite
+   reconfirm `.local-dual-client-suite.sh`); XC live also covers busy
+   second client, successive tip, external lease revocation, and stale
+   If-Match 412. Phone instrumented reload via `adb reverse` is closed
+   for opaque and real AES-KDF tips
+   (`KdbxCoordinatorLoopbackInstrumentedTest` on OnePlus 13R). GUI
+   click-through and manual app reopen remain open. Cross-open without GUI
+   is closed locally (KeySafe AES-KDF tip → `keepassxc-cli`; XC-cli Argon2
+   DB → KeySafe StrictLoad). Android offline→reconnect protocol path is
+   closed locally (`KdbxOfflineReconnectLiveIntegrationTest`). Auto-publish
+   stays denied. No GitHub Actions pushes until monthly minutes reset.
 7. Existing Go reference tests cover concurrent same-revision writes, a
    streaming body failure, expired leases during upload, backups, and renewal.
    They run under Go's race detector.
@@ -66,6 +77,19 @@ Native Argon2id assemble→write→reload (DX only):
 ./gradlew :app:connectedLibreDebugAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.class=\
 com.kunzisoft.keepass.coordination.KdbxAssembledCiphertextArgon2InstrumentedTest
+```
+
+Phone tip reload via `adb reverse` (device attached; not CI):
+
+```bash
+adb reverse tcp:8765 tcp:8765
+./gradlew :app:connectedLibreDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=\
+com.kunzisoft.keepass.coordination.KdbxCoordinatorLoopbackInstrumentedTest \
+  -Pandroid.testInstrumentationRunnerArguments.integration_url=http://127.0.0.1:8765 \
+  -Pandroid.testInstrumentationRunnerArguments.integration_token="$TOKEN" \
+  -Pandroid.testInstrumentationRunnerArguments.integration_db_id="$DB_ID" \
+  -Pandroid.testInstrumentationRunnerArguments.integration_expected_sha256="$TIP_SHA"
 ```
 
 CI compiles the instrumented sources (`:app:compileLibreDebugAndroidTestKotlin`)
